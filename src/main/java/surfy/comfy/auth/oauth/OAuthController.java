@@ -8,6 +8,7 @@ import surfy.comfy.config.BaseException;
 import surfy.comfy.config.BaseResponse;
 import surfy.comfy.data.token.TokenResponse;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
@@ -15,16 +16,18 @@ import java.io.IOException;
 public class OAuthController {
     private final OAuthService oAuthService;
     Logger logger= LoggerFactory.getLogger(OAuthController.class);
+    private final HttpServletResponse response;
 
-    @GetMapping("/auth/{socialLoginType}") //GOOGLE이 들어올 것이다.
+    @GetMapping("/login/{socialLoginType}") //GOOGLE이 들어올 것이다.
     //BaseResponse<String>
-    public  BaseResponse<String> socialLoginRedirect(@PathVariable(name="socialLoginType") String SocialLoginPath) throws IOException {
+    public void socialLoginRedirect(@PathVariable(name="socialLoginType") String SocialLoginPath) throws IOException {
         SocialLoginType socialLoginType= SocialLoginType.valueOf(SocialLoginPath.toUpperCase());
         String redirectUrl= oAuthService.request(socialLoginType);
-        return new BaseResponse<>(redirectUrl);
+        response.sendRedirect(redirectUrl);
+
+        //return new BaseResponse<>(redirectUrl);
     }
 
-    @ResponseBody
     @GetMapping(value = "/auth/{socialLoginType}/callback")
     public BaseResponse<TokenResponse> callback (
             @PathVariable(name = "socialLoginType") String socialLoginPath,
@@ -36,4 +39,15 @@ public class OAuthController {
 
         return new BaseResponse<>(tokenResponse);
     }
+
+//    @GetMapping("/auth/google/{accessToken}")
+//    public BaseResponse<TokenResponse> login (
+//            @PathVariable(name = "accessToken") String accessToken)throws IOException, BaseException {
+//        System.out.println(">> 소셜 로그인 API 서버로부터 받은 code :"+ code);
+//        SocialLoginType socialLoginType= SocialLoginType.valueOf(socialLoginPath.toUpperCase());
+//        logger.info("socialLoginType:{}",socialLoginType);
+//        TokenResponse tokenResponse=oAuthService.oAuthLogin(socialLoginType,code);
+//
+//        return new BaseResponse<>(tokenResponse);
+//    }
 }

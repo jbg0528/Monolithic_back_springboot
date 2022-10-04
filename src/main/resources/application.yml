@@ -7,13 +7,16 @@ spring:
       username: root
       password: mysqlpw12!@
   jpa:
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-          format_sql: true
-          ddl-auto: create
-      show-sql: true
-      generate-ddl: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        format_sql: true
+        show-sql: true
+        generate-ddl: true
+
+
 
   OAuth2:
       google:

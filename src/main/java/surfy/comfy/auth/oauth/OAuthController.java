@@ -28,21 +28,34 @@ public class OAuthController {
         //return new BaseResponse<>(redirectUrl);
     }
 
-    @GetMapping(value = "/auth/{socialLoginType}/callback")
-    public BaseResponse<TokenResponse> callback (
-            @PathVariable(name = "socialLoginType") String socialLoginPath,
-            @RequestParam(name = "code") String code)throws IOException, BaseException {
-        System.out.println(">> 소셜 로그인 API 서버로부터 받은 code :"+ code);
-        SocialLoginType socialLoginType= SocialLoginType.valueOf(socialLoginPath.toUpperCase());
-        logger.info("socialLoginType:{}",socialLoginType);
-        TokenResponse tokenResponse=oAuthService.oAuthLogin(socialLoginType,code);
+//    @GetMapping(value = "/auth/{socialLoginType}/callback")
+//    public BaseResponse<TokenResponse> callback (
+//            @PathVariable(name = "socialLoginType") String socialLoginPath,
+//            @RequestParam(name = "code") String code)throws IOException, BaseException {
+//        System.out.println(">> 소셜 로그인 API 서버로부터 받은 code :"+ code);
+//        SocialLoginType socialLoginType= SocialLoginType.valueOf(socialLoginPath.toUpperCase());
+//        logger.info("socialLoginType:{}",socialLoginType);
+//        TokenResponse tokenResponse=oAuthService.oAuthLogin(socialLoginType,code);
+//
+//        return new BaseResponse<>(tokenResponse);
+//    }
+
+//    @GetMapping(value="/login/{socialLoginType}")
+    @GetMapping(value="/login/google/{accessToken}")
+    public BaseResponse<TokenResponse> login(@PathVariable(name="accessToken") String accessToken) throws IOException {
+//    public BaseResponse<TokenResponse> login(@PathVariable(name = "socialLoginType") String socialLoginPath, @RequestParam(name="accessToken") String accessToken) throws IOException {
+        //logger.info("[login] socialLoginType: {}",socialLoginPath);
+        logger.info("[login] accessToken: {}",accessToken);
+        SocialLoginType socialLoginType= SocialLoginType.valueOf("google".toUpperCase());
+        TokenResponse tokenResponse=oAuthService.oAuthLogin(socialLoginType,accessToken);
+        logger.info("tokenResponse: {}",tokenResponse);
 
         return new BaseResponse<>(tokenResponse);
     }
 
-//    @GetMapping("/auth/google/{accessToken}")
-//    public BaseResponse<TokenResponse> login (
-//            @PathVariable(name = "accessToken") String accessToken)throws IOException, BaseException {
+//    @GetMapping("/auth/google/{code}")
+//    public BaseResponse<TokenResponse> login2 (
+//            @PathVariable(name = "code") String code)throws IOException, BaseException {
 //        System.out.println(">> 소셜 로그인 API 서버로부터 받은 code :"+ code);
 //        SocialLoginType socialLoginType= SocialLoginType.valueOf(socialLoginPath.toUpperCase());
 //        logger.info("socialLoginType:{}",socialLoginType);

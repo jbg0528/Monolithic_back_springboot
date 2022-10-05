@@ -4,16 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import surfy.comfy.entity.Answer;
-import surfy.comfy.entity.Essay;
-import surfy.comfy.entity.Grid;
-import surfy.comfy.entity.Linear;
-import surfy.comfy.entity.Member;
-import surfy.comfy.entity.Option;
-import surfy.comfy.entity.Post;
+import surfy.comfy.entity.*;
 import surfy.comfy.type.QuestionType;
-import surfy.comfy.entity.Question;
-import surfy.comfy.entity.Survey;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -58,7 +50,7 @@ public class InitDB {
             Survey survey1=createSurvey("설문지1","설문지1입니다.",member1);
             em.persist(survey1);
 
-            Survey survey2=createSurvey("설문지2","설문지2입니다.",member1);
+            Survey survey2=createSurvey("설문지2","설문지2입니다.",member2);
             em.persist(survey2);
 
             // set questions
@@ -148,12 +140,16 @@ public class InitDB {
             Essay essay2=createEssay(member4,question4,"주관식 응답2입니다.");
             em.persist(essay2);
 
-            //set posts
+            // set posts
             Post post1=createPost(survey1,member1,"게시글1","게시글1입니다.");
             em.persist(post1);
 
-            Post post2=createPost(survey2,member1,"게시글2","게시글2입니다.");
+            Post post2=createPost(survey2,member2,"게시글2","게시글2입니다.");
             em.persist(post2);
+
+            // set bookmark - member1이 게시글2(post2)를 북마크함.
+            Bookmark bookmark1=createBookmark(member1,post2);
+            em.persist(bookmark1);
         }
 
 
@@ -241,6 +237,14 @@ public class InitDB {
             post.setContents(contents);
 
             return post;
+        }
+
+        private Bookmark createBookmark(Member member,Post post){
+            Bookmark bookmark=new Bookmark();
+            bookmark.setMember(member);
+            bookmark.setPost(post);
+
+            return bookmark;
         }
     }
 }

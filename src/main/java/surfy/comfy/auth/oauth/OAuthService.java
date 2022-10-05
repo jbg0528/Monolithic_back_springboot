@@ -73,7 +73,7 @@ public class OAuthService {
                 }
 
                 Member member = memberRepository.findByEmail(googleUser.getEmail()).orElseThrow(IllegalArgumentException::new);
-                TokenResponse tokenResponse=new TokenResponse(jwtAccessToken,jwtRefreshToken,member.getId(),member.getName());
+                TokenResponse tokenResponse=new TokenResponse(jwtAccessToken,jwtRefreshToken,member.getId(),member.getName(),member.getEmail());
 
                 return tokenResponse;
                 //우리 서버의 db와 대조하여 해당 user가 존재하는 지 확인한다.

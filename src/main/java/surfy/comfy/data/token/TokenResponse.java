@@ -14,5 +14,6 @@ public class TokenResponse {
     private String REFRESH_TOKEN;
     private Long memberId;
     private String memberName;
+    private String email;
    //private String profile;
 }

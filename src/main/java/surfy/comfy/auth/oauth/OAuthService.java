@@ -24,13 +24,13 @@ import surfy.comfy.repository.TokenRepository;
 @RequiredArgsConstructor
 public class OAuthService {
     private final GoogleOauth googleOauth;
+    private final KakaoOauth kakaoOauth;
     private final HttpServletResponse response;
     Logger logger= LoggerFactory.getLogger(OAuthService.class);
 
     private final MemberRepository memberRepository;
     private final TokenRepository tokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
     public String request(SocialLoginType socialLoginType) throws IOException {
         String redirectURL;
         switch (socialLoginType) {
@@ -47,6 +47,7 @@ public class OAuthService {
         }
         return redirectURL;
         //response.sendRedirect(redirectURL);
+        //logger.info("sendRedirect");
     }
 
     public TokenResponse oAuthLogin(SocialLoginType socialLoginType, String accessToken) throws IOException {
@@ -76,19 +77,34 @@ public class OAuthService {
                 TokenResponse tokenResponse=new TokenResponse(jwtAccessToken,jwtRefreshToken,member.getId(),member.getName(),member.getEmail());
 
                 return tokenResponse;
-                //우리 서버의 db와 대조하여 해당 user가 존재하는 지 확인한다.
-//                int user_num=accountProvider.getUserNum(user_id);
+            }
+            case KAKAO: {
+                //카카오로 일회성 코드를 보내 액세스 토큰이 담긴 응답객체를 받아옴
+                String code=accessToken;
+                KakaoOAuthToken kakaoOAuthToken = kakaoOauth.getAccessToken(code);
+                //응답 객체가 JSON형식으로 되어 있으므로, 이를 deserialization해서 자바 객체에 담을 것이다.
+                //GoogleOAuthToken oAuthToken = googleOauth.getAccessToken(accessTokenResponse);
+                //액세스 토큰을 다시 구글로 보내 구글에 저장된 사용자 정보가 담긴 응답 객체를 받아온다.
+                //ResponseEntity<String> userInfoResponse = googleOauth.requestUserInfo(oAuthToken);
+                //ResponseEntity<String> userInfoResponse = googleOauth.requestUserInfo(accessToken);
+                //다시 JSON 형식의 응답 객체를 자바 객체로 역직렬화한다.
+               // GoogleUser googleUser = googleOauth.getUserInfo(userInfoResponse);
+////                logger.info("googleUser: {}",googleUser);
+////                String user_id = googleUser.getEmail();
+////                logger.info("userId: {}", user_id);
+////
+////                String jwtAccessToken=jwtTokenProvider.createAccessToken(googleUser.getEmail());
+////                String jwtRefreshToken=jwtTokenProvider.createRefreshToken(googleUser.getEmail());
+////
+////                if(!isJoinedUser(googleUser)){
+////                    signUp(googleUser,jwtRefreshToken);
+////                }
+////
+////                Member member = memberRepository.findByEmail(googleUser.getEmail()).orElseThrow(IllegalArgumentException::new);
+////                TokenResponse tokenResponse=new TokenResponse(jwtAccessToken,jwtRefreshToken,member.getId(),member.getName(),member.getEmail());
 //
-//                if(user_num!=0){
-//                    //서버에 user가 존재하면 앞으로 회원 인가 처리를 위한 jwtToken을 발급한다.
-//                    String jwtToken=jwtService.createJwt(user_num,user_id);
-//                    //액세스 토큰과 jwtToken, 이외 정보들이 담긴 자바 객체를 다시 전송한다.
-//                    GetSocialOAuthRes getSocialOAuthRes=new GetSocialOAuthRes(jwtToken,user_num,oAuthToken.getAccess_token(),oAuthToken.getToken_type());
-//                    return getSocialOAuthRes;
-//                }
-//                else {
-//                    throw new BaseException(BaseResponseStatus.ACCOUNT_DOESNT_EXISTS);
-//                }
+//                return tokenResponse;
+                return null;
 
             }
             default: {
@@ -112,8 +128,6 @@ public class OAuthService {
         token.setMember(member);
         token.setRefreshToken(refreshToken);
         tokenRepository.save(token);
-
-
     }
 
     // refresh token으로 access token 재발급

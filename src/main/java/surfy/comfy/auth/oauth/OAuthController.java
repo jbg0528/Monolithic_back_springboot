@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import surfy.comfy.config.BaseException;
 import surfy.comfy.config.BaseResponse;
 import surfy.comfy.data.token.TokenResponse;
+import surfy.comfy.entity.Token;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -20,11 +21,13 @@ public class OAuthController {
 
     @GetMapping("/login/{socialLoginType}") //GOOGLE이 들어올 것이다.
     //BaseResponse<String>
-    public void socialLoginRedirect(@PathVariable(name="socialLoginType") String SocialLoginPath) throws IOException {
+    public String socialLoginRedirect(@PathVariable(name="socialLoginType") String SocialLoginPath) throws IOException {
+        logger.info("OAuthController");
         SocialLoginType socialLoginType= SocialLoginType.valueOf(SocialLoginPath.toUpperCase());
-        String redirectUrl= oAuthService.request(socialLoginType);
-        response.sendRedirect(redirectUrl);
-
+        logger.info("[socialLoginRedirect] - {}",socialLoginType);
+        String redirectUrl=oAuthService.request(socialLoginType);
+        //response.sendRedirect(redirectUrl);
+        return redirectUrl;
         //return new BaseResponse<>(redirectUrl);
     }
 
@@ -40,9 +43,10 @@ public class OAuthController {
 //        return new BaseResponse<>(tokenResponse);
 //    }
 
-//    @GetMapping(value="/login/{socialLoginType}")
+
+    // 구글 로그인 프론트에서 accessToken을 받음.
     @GetMapping(value="/login/google/{accessToken}")
-    public BaseResponse<TokenResponse> login(@PathVariable(name="accessToken") String accessToken) throws IOException {
+    public BaseResponse<TokenResponse> googleLogin(@PathVariable(name="accessToken") String accessToken) throws IOException {
 //    public BaseResponse<TokenResponse> login(@PathVariable(name = "socialLoginType") String socialLoginPath, @RequestParam(name="accessToken") String accessToken) throws IOException {
         //logger.info("[login] socialLoginType: {}",socialLoginPath);
         logger.info("[login] accessToken: {}",accessToken);
@@ -53,14 +57,13 @@ public class OAuthController {
         return new BaseResponse<>(tokenResponse);
     }
 
-//    @GetMapping("/auth/google/{code}")
-//    public BaseResponse<TokenResponse> login2 (
-//            @PathVariable(name = "code") String code)throws IOException, BaseException {
-//        System.out.println(">> 소셜 로그인 API 서버로부터 받은 code :"+ code);
-//        SocialLoginType socialLoginType= SocialLoginType.valueOf(socialLoginPath.toUpperCase());
-//        logger.info("socialLoginType:{}",socialLoginType);
+//    @GetMapping("/login/kakao/{code}")
+//    public BaseResponse<TokenResponse> kakaoLogin(@PathVariable(name="code")String code) throws IOException {
+//        logger.info("[KAKAO LOGIN]");
+//        SocialLoginType socialLoginType= SocialLoginType.valueOf("kakao".toUpperCase());
 //        TokenResponse tokenResponse=oAuthService.oAuthLogin(socialLoginType,code);
 //
 //        return new BaseResponse<>(tokenResponse);
 //    }
+
 }

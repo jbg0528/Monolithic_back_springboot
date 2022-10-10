@@ -8,4 +8,5 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post,Long> {
 
     List<Post> findAllByMember_Id(Long memberId);
+    List<Post> findByTitleContaining(String title);
 }

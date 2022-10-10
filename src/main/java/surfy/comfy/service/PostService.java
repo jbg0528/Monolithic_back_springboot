@@ -1,20 +1,25 @@
 package surfy.comfy.service;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import surfy.comfy.data.post.CreatePostRequest;
-import surfy.comfy.data.post.CreatePostResponse;
-import surfy.comfy.data.post.GetPostResponse;
-import surfy.comfy.data.post.PostResponse;
+import surfy.comfy.data.post.*;
 import surfy.comfy.entity.Bookmark;
+import surfy.comfy.entity.Option;
 import surfy.comfy.entity.Post;
+import surfy.comfy.entity.Survey;
+import surfy.comfy.exception.post.CannotDeletePost;
+import surfy.comfy.exception.post.DeleteInvalidUser;
+import surfy.comfy.repository.BookmarkRepository;
 import surfy.comfy.repository.MemberRepository;
 import surfy.comfy.repository.PostRepository;
 import surfy.comfy.repository.SurveyRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -26,7 +31,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final SurveyRepository surveyRepository;
     private final MemberRepository memberRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final BookmarkService bookmarkService;
+    private final Logger logger= LoggerFactory.getLogger(PostService.class);
 
     @Transactional
     public List<PostResponse> getMyposts(Long memberId){
@@ -52,10 +59,29 @@ public class PostService {
     }
 
     @Transactional
-    public GetPostResponse getPost(Long postId){
-        Post post=postRepository.findById(postId).get();
+    public GetPostResponse getPost(Long postId,String memberId){
+        logger.info("[getPost] - memberId: {}",memberId);
 
-        GetPostResponse response=new GetPostResponse(post);
+        Post post=postRepository.findById(postId).get();
+        Boolean isBookmarked=false;
+        Boolean member_case=false;
+
+        if(memberId.equals("null")){ // 비회원
+            member_case=false;
+        }
+        else{ // 회원
+            Long member_id=Long.parseLong(memberId);
+            member_case=true;
+            Bookmark bookmark=bookmarkRepository.findByMember_IdAndPost_Id(member_id,postId);
+            if(bookmark==null){
+                isBookmarked=false;
+            }
+            else{
+                isBookmarked=true;
+            }
+        }
+
+        GetPostResponse response=new GetPostResponse(post,isBookmarked,member_case);
 
         return response;
     }
@@ -72,5 +98,55 @@ public class PostService {
 
         return "게시글 생성 완료";
 
+    }
+
+//    @Transactional
+//    public DeletePostResponse deletePost(Long postId, String memberId){
+//        Post post=postRepository.findById(postId).get();
+//        Optional<Survey> survey=surveyRepository.findById(post.getSurvey().getId());
+//        if(!survey.isPresent()){
+//            throw new CannotDeletePost();
+//        }
+//        if(post.getMember().getId()!=Long.parseLong(memberId)){
+//            logger.info("throw exception");
+//            throw new DeleteInvalidUser();
+//        }
+//
+//        // 해당 게시글을 북마크한 사람들의 북마크 삭제
+//        List<Bookmark> bookmarks=bookmarkRepository.findAllByPost_Id(postId);
+//        for(Bookmark bookmark:bookmarks){
+//            bookmarkRepository.delete(bookmark);
+//        }
+//
+//        postRepository.delete(post);
+//
+//
+//        return new DeletePostResponse(postId,Long.parseLong(memberId));
+//    }
+
+    @Transactional
+    public DeletePostResponse deletePost(Long postId, String memberId){
+        Post post=postRepository.findById(postId).get();
+
+        // 해당 게시글을 북마크한 사람들의 북마크 삭제
+        List<Bookmark> bookmarks=bookmarkRepository.findAllByPost_Id(postId);
+        for(Bookmark bookmark:bookmarks){
+            bookmarkRepository.delete(bookmark);
+        }
+
+        postRepository.delete(post);
+
+
+        return new DeletePostResponse(postId,Long.parseLong(memberId));
+    }
+    @Transactional
+    public List<PostResponse> searchPost(String title){
+        List<Post> SearchList = postRepository.findByTitleContaining(title);
+        List<PostResponse> search=SearchList.stream()
+                .map(p -> new PostResponse(p))
+                .collect(Collectors.toList());
+
+        System.out.println("service:"+search);
+        return search;
     }
 }

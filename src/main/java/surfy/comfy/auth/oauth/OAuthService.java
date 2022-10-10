@@ -24,7 +24,7 @@ import surfy.comfy.repository.TokenRepository;
 @RequiredArgsConstructor
 public class OAuthService {
     private final GoogleOauth googleOauth;
-    private final KakaoOauth kakaoOauth;
+    //private final KakaoOauth kakaoOauth;
     private final HttpServletResponse response;
     Logger logger= LoggerFactory.getLogger(OAuthService.class);
 
@@ -81,7 +81,7 @@ public class OAuthService {
             case KAKAO: {
                 //카카오로 일회성 코드를 보내 액세스 토큰이 담긴 응답객체를 받아옴
                 String code=accessToken;
-                KakaoOAuthToken kakaoOAuthToken = kakaoOauth.getAccessToken(code);
+                //KakaoOAuthToken kakaoOAuthToken = kakaoOauth.getAccessToken(code);
                 //응답 객체가 JSON형식으로 되어 있으므로, 이를 deserialization해서 자바 객체에 담을 것이다.
                 //GoogleOAuthToken oAuthToken = googleOauth.getAccessToken(accessTokenResponse);
                 //액세스 토큰을 다시 구글로 보내 구글에 저장된 사용자 정보가 담긴 응답 객체를 받아온다.
@@ -145,7 +145,7 @@ public class OAuthService {
                 Claims claimsToken = jwtTokenProvider.getClaimsToken(refreshToken);
                 String email = (String)claimsToken.get("email");
                 Optional<Member> member = memberRepository.findByEmail(email);
-                String tokenFromDB = tokenRepository.findByMemberId(member.get().getId()).get().getRefreshToken();
+                String tokenFromDB = tokenRepository.findByMember_Id(member.get().getId()).get().getRefreshToken();
                 logger.info("refresh token from DB: {}",tokenFromDB);
                 if(refreshToken.equals(tokenFromDB)) {   //DB의 refresh토큰과 지금들어온 토큰이 같은지 확인
                     logger.info("reissue access token");

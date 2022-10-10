@@ -17,8 +17,10 @@ public class GetPostResponse {
     private String surveyTitle;
     private String authorName;
     private Long authorId;
+    private Boolean isBookmarked;
+    private Boolean member_case; // true면 회원, false면 비회원
 
-    public GetPostResponse(Post post){
+    public GetPostResponse(Post post,Boolean isBookmarked,Boolean member_case){
         this.postId=post.getId();
         this.title=post.getTitle();
         this.contents=post.getContents();
@@ -27,6 +29,8 @@ public class GetPostResponse {
         this.surveyTitle=post.getSurvey().getTitle();
         this.authorName=post.getMember().getName();
         this.authorId=post.getMember().getId();
+        this.isBookmarked=isBookmarked;
+        this.member_case=member_case;
     }
 
 }

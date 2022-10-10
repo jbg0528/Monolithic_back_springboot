@@ -2,6 +2,7 @@ package surfy.comfy.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -18,12 +19,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // TODO: jwt interceptor addPathPatterns 수정 필요
         registry.addInterceptor(jwtTokenInterceptor)
-                .addPathPatterns("/member/**")
-                .addPathPatterns("/bookmark/**")
-                .addPathPatterns("/folder/**")
-                .addPathPatterns("/search")
-                .addPathPatterns("/team/**")
-                .addPathPatterns("/trash/**");
+                .addPathPatterns("/myPage/**")
+                ;
 
 
     }
@@ -31,7 +28,28 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry){
         // TODO: allowedOrigins-> 우리 서버 ip로 수정 필요 ex)http://192.126.32.2:3000
+//        registry.addMapping("/**")
+//                .allowedOrigins("*");
+
         registry.addMapping("/**")
-                .allowedOrigins("*");
+                .allowedOrigins("http://localhost:3000")
+                .exposedHeaders("ACCESS_TOKEN")
+                .exposedHeaders("REFRESH_TOKEN")
+                .allowCredentials(true)
+                .allowedMethods(
+                        HttpMethod.GET.name(),
+                        HttpMethod.HEAD.name(),
+                        HttpMethod.POST.name(),
+                        HttpMethod.PUT.name(),
+                        HttpMethod.DELETE.name());
+
+//        registry.addMapping("/**")
+//                .allowedOrigins("*")
+//                .allowedMethods("POST", "OPTIONS")
+//                .allowedMethods("DELETE","OPTIONS")
+//                .allowedMethods("GET","OPTIONS")
+//                .allowedHeaders("Content-Type", "ACCESS_TOKEN")
+//                .allowedHeaders("Content-Type","REFRESH_TOKEN");
+
     }
 }

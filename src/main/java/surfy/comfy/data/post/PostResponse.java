@@ -23,7 +23,7 @@ public class PostResponse {
     public PostResponse(Bookmark bookmark){
         this.title=bookmark.getPost().getTitle();
         this.author=bookmark.getPost().getMember().getName();
-        this.postId= bookmark.getId();
+        this.postId= bookmark.getPost().getId();
 //        this.type="bookmark";
     }
 }

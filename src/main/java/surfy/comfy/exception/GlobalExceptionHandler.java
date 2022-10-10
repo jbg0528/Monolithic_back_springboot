@@ -80,18 +80,11 @@ public class GlobalExceptionHandler {
     protected BaseResponse handleBusinessException(final BusinessException e) {
         log.error("handleBusinessException", e);
         final BaseResponseStatus errorCode = e.getErrorCode();
-        return new BaseResponse(errorCode);
+        log.info("errorCode: {}",errorCode);
+        BaseResponse response=new BaseResponse(errorCode);
+        log.info("response - isSuccess :{}",response.getIsSuccess());
+        return response;
     }
-//    @ExceptionHandler(BusinessException.class)
-//    protected ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e) {
-//        log.error("handleBusinessException", e);
-//        final BaseResponseStatus errorCode = e.getErrorCode();
-//        log.info("errorCode: {}", errorCode);
-//        final ErrorResponse response = ErrorResponse.of(errorCode);
-//        log.info("response: {}", response);
-//        return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getCode()));
-//    }
-
 
     @ExceptionHandler(Exception.class)
     protected BaseResponse handleException(Exception e) {

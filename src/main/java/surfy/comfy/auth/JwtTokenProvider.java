@@ -26,10 +26,11 @@ public class JwtTokenProvider {
 
     private String REFRESH_KEY="afkljeoiwajtgfasjdfhwerklawejriwjrewkhrjwajfejfkjawekraewradfaer3247hfkjashf9o3wrhkjgdfakhf3e9o5y8y4hfkjhfakjdhfwkerhwkahrfklwejr1l2kjeksekf";
 
-    //private final long ACCESS_TOKEN_VALID_TIME = 1000 * 60 * 5;
-//    private final long ACCESS_TOKEN_VALID_TIME = 1 * 60 * 1000L;   // 1분
-    private final long ACCESS_TOKEN_VALID_TIME = 1 * 30 * 1000L;   // 30초
-    private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 7 * 1000L;   // 1주
+    // 1 * 60 * 1000L;   // 1분
+    // 1 * 30 * 1000L;   // 30초
+    // 60 * 60 * 24 * 7 * 1000L; //1주
+    private final long ACCESS_TOKEN_VALID_TIME = 1 * 10 * 1000L;
+    private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 7 * 1000L;
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct

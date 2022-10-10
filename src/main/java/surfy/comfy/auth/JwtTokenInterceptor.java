@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import surfy.comfy.auth.oauth.OAuthService;
 import surfy.comfy.data.token.TokenResponse;
+import surfy.comfy.exception.token.InvalidRefreshToken;
 import surfy.comfy.service.MemberService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +24,8 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
     // preHandle -> 컨트롤러의 메서드에 매핑된 특정 URI가 호출됐을 때 실행되는 메서드, 컨트롤러를 접근하기 직전에 실행되는 메서드.
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-
+        logger.info("preHandle method: {}",request.getMethod());
+        logger.info("request: {}",request.getHeader("ACCESS_TOKEN"));
         logger.info("JwtToken 호출");
         String accessToken = request.getHeader("ACCESS_TOKEN");
         logger.info("AccessToken: {}",accessToken);
@@ -45,12 +47,16 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
             response.setHeader("msg", "Reissue access token.");
             return true;
         }
+        // refresh token도 유효하지 않은 경우
 
-        response.setStatus(401);
-        response.setHeader("ACCESS_TOKEN", accessToken);
-        response.setHeader("REFRESH_TOKEN", refreshToken);
-        response.setHeader("msg", "Check the tokens.");
 
-        return false;
+//        response.setStatus(401);
+//        response.setHeader("ACCESS_TOKEN", accessToken);
+//        response.setHeader("REFRESH_TOKEN", refreshToken);
+//        response.setHeader("msg", "Check the tokens.");
+//        logger.info("response: {}",response);
+        throw new InvalidRefreshToken();
+        //return true;
+        //return false;
     }
 }

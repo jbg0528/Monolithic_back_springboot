@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static surfy.comfy.config.BaseResponseStatus.SUCCESS;
 
@@ -19,6 +21,7 @@ public class BaseResponse<T> {
     private final int code;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
+
 
     // 요청에 성공한 경우
     public BaseResponse(T result) {

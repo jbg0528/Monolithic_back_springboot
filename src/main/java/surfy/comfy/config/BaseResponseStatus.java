@@ -28,6 +28,11 @@ public enum BaseResponseStatus {
 
     // 회원가입
 
+    // post
+    // 게시글 삭제 - 설문지가 존재해서 게시글 삭제 불가
+    SURVEY_EXIST(false,2020,"설문지가 존재하여 게시글 삭제가 불가합니다. 설문지를 먼저 삭제해주세요."),
+    //게시글 삭제 - 설문지 삭제 시도 유저가 잘못됨.
+    DELETE_INVALID_USER(false,2021,"잘못된 유저가 게시글 삭제를 시도했습니다."),
 
 
 

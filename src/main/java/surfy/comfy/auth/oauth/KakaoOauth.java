@@ -59,7 +59,7 @@
 //        return kakaoOAuthToken;
 //    }
 //
-//    public KakaoUser requestUserInfo(KakaoOAuthToken oAuthToken){
+//    public KakaoUser requestUserInfo(KakaoOAuthToken oAuth Token){
 //        String KAKAO_USERINFO_REQUEST_URL="https://kapi.kakao.com/v2/user/me";
 //
 //

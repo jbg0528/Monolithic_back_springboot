@@ -3,6 +3,7 @@ package surfy.comfy.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -20,6 +21,12 @@ public class WebConfig implements WebMvcConfigurer {
         // TODO: jwt interceptor addPathPatterns 수정 필요
         registry.addInterceptor(jwtTokenInterceptor)
                 .addPathPatterns("/myPage/**")
+                .addPathPatterns("/survey/**")
+                .addPathPatterns("/surveyPage/**")
+                .addPathPatterns("/selectSurvey/**")
+                //.addPathPatterns("/created-survey/**")
+                //.addPathPatterns("/createSurvey/**")
+                //.addPathPatterns("/editsurvey/**")
                 ;
 
 

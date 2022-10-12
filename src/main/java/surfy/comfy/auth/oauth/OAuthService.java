@@ -68,12 +68,19 @@ public class OAuthService {
 
                 String jwtAccessToken=jwtTokenProvider.createAccessToken(googleUser.getEmail());
                 String jwtRefreshToken=jwtTokenProvider.createRefreshToken(googleUser.getEmail());
+                logger.info("[발급된 refresh token]: {}",jwtRefreshToken);
 
                 if(!isJoinedUser(googleUser)){
                     signUp(googleUser,jwtRefreshToken);
+                    logger.info("[회원가입]");
                 }
 
+                logger.info("[로그인]");
                 Member member = memberRepository.findByEmail(googleUser.getEmail()).orElseThrow(IllegalArgumentException::new);
+                Token token=new Token();
+                token.setMember(member);
+                token.setRefreshToken(jwtRefreshToken);
+                //logger.info("[로그인] - refresh token 재발급");
                 TokenResponse tokenResponse=new TokenResponse(jwtAccessToken,jwtRefreshToken,member.getId(),member.getName(),member.getEmail());
 
                 return tokenResponse;

@@ -25,6 +25,7 @@ public class BookmarkController {
      */
     @PostMapping("/bookmark/{postId}/{memberId}")
     public BaseResponse<String> addBookmark(@PathVariable(name="postId")Long postId, @PathVariable(name="memberId")Long memberId){
+        logger.info("[addBookmark]- postId: {} memberId: {}",postId,memberId);
         String response=bookmarkService.addBookmark(postId,memberId);
 
         return new BaseResponse<>(response);

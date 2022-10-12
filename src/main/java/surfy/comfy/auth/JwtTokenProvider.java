@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import surfy.comfy.entity.Token;
+import surfy.comfy.repository.TokenRepository;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     Logger logger= LoggerFactory.getLogger(JwtTokenProvider.class);
+    private final TokenRepository tokenRepository;
 //    @Value("${jwt.secret.access}")
 //    private String SECRET_KEY;
 //    @Value("${jwt.secret.refresh}")
@@ -123,17 +126,14 @@ public class JwtTokenProvider {
     }
     public boolean isValidRefreshToken(String token) {
         System.out.println("isValidRefreshToken is : " +token);
-
         try {
             Claims refreshClaims = getClaimsToken(token);
-//            Claims accessClaims = getClaimsFormToken(token);
-//            logger.info("Access expireTime: {}",accessClaims.getExpiration());
-//            logger.info("Access email: {}",accessClaims.get("email"));
-
             logger.info("Refresh expireTime: {}",refreshClaims.getExpiration());
             logger.info("Refresh email: {}",refreshClaims.get("email"));
             return true;
-        } catch (ExpiredJwtException exception) {
+        } catch (ExpiredJwtException exception) { // 리프레시 토큰 만료
+            Token refreshToken= tokenRepository.findByRefreshToken(token).get();
+            tokenRepository.delete(refreshToken);
             System.out.println("Token Expired email : " + exception.getClaims().get("email"));
             return false;
         } catch (JwtException exception) {

@@ -6,16 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import surfy.comfy.data.post.*;
-import surfy.comfy.entity.Bookmark;
-import surfy.comfy.entity.Option;
-import surfy.comfy.entity.Post;
-import surfy.comfy.entity.Survey;
+import surfy.comfy.entity.*;
 import surfy.comfy.exception.post.CannotDeletePost;
 import surfy.comfy.exception.post.DeleteInvalidUser;
 import surfy.comfy.repository.BookmarkRepository;
 import surfy.comfy.repository.MemberRepository;
 import surfy.comfy.repository.PostRepository;
 import surfy.comfy.repository.SurveyRepository;
+import surfy.comfy.type.SurveyType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,5 +146,37 @@ public class PostService {
 
         System.out.println("service:"+search);
         return search;
+    }
+
+    @Transactional
+    public List<MySurveyResponse> getMySurvey(Long memberId){
+        List<Survey> mySurveyList = surveyRepository.findAllByMember_Id(memberId);
+        List<MySurveyResponse> surveyList=mySurveyList.stream()
+                .map(p -> new MySurveyResponse(p))
+                .collect(Collectors.toList());
+        System.out.println("SurveyList: "+surveyList);
+        return surveyList;
+    }
+
+    @Transactional
+    public List<MySurveyResponse> getMySurvey(Long memberId, SurveyType status){
+        List<Survey> mySurveyList = surveyRepository.findAllByMember_IdAndStatus(memberId,SurveyType.finish);
+        List<MySurveyResponse> surveyList=mySurveyList.stream()
+                .map(p -> new MySurveyResponse(p))
+                .collect(Collectors.toList());
+        System.out.println("SurveyList: "+surveyList);
+        return surveyList;
+    }
+
+    @Transactional
+    public RequestPost registerPost(RequestPost request){
+        Post post=new Post();
+        Member member=memberRepository.findById(request.getMemberId()).get();
+        Survey survey=surveyRepository.findById(request.getSurveyId()).get();
+        post.setTitle(request.getTitle());
+        post.setContents(request.getContents());
+        post.setMember(member);
+        post.setSurvey(survey);
+        return new RequestPost(postRepository.saveAndFlush(post));
     }
 }

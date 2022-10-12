@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface GridRepository extends JpaRepository<Grid, Long> {
     List<Grid> findAllByQuestion_Id(Long QuestionId);
+    List<Grid> findAllBySurvey_Id(Long surveyId);
 }

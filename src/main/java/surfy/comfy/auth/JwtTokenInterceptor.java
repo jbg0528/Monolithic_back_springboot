@@ -25,7 +25,7 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         logger.info("preHandle method: {}",request.getMethod());
-        logger.info("request: {}",request.getHeader("ACCESS_TOKEN"));
+        logger.info("request: {}",request.getHeader("REFRESH_TOKEN"));
         logger.info("JwtToken 호출");
         String accessToken = request.getHeader("ACCESS_TOKEN");
         logger.info("AccessToken: {}",accessToken);

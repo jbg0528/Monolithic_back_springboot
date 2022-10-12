@@ -1,5 +1,6 @@
 package surfy.comfy.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.List;
 @Table(name="member")
 public class Member {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="member_id")
     private Long id;
 
@@ -22,12 +23,15 @@ public class Member {
     //private String password;
     private String name;
 
+    @JsonManagedReference
     @OneToMany(mappedBy="member",cascade = CascadeType.ALL)
     private List<Post> posts;
 
+    @JsonManagedReference
     @OneToMany(mappedBy="member",cascade=CascadeType.ALL)
     private List<Survey> surveys;
 
+    @JsonManagedReference
     @OneToMany(mappedBy="member",cascade = CascadeType.ALL)
     private List<Bookmark> bookmarks;
 

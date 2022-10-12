@@ -8,6 +8,7 @@ import surfy.comfy.config.BaseResponse;
 import surfy.comfy.data.bookmark.PostBookmarkResponse;
 import surfy.comfy.data.post.*;
 import surfy.comfy.entity.Post;
+import surfy.comfy.repository.PostRepository;
 import surfy.comfy.service.BookmarkService;
 import surfy.comfy.service.PostService;
 
@@ -20,6 +21,7 @@ public class PostController {
 
     private final PostService postService;
     private final BookmarkService bookmarkService;
+    private final PostRepository postRepository;
 
     private final Logger logger= LoggerFactory.getLogger(PostController.class);
 
@@ -95,6 +97,23 @@ public class PostController {
         return new BaseResponse<>(SearchList);
 
     }
+
+    @GetMapping("/selectSurvey/{memberId}")
+    public BaseResponse<List<MySurveyResponse>> selectSurvey(@PathVariable(name="memberId")Long memberId){
+        List<MySurveyResponse> SurveyList = postService.getMySurvey(memberId);
+        System.out.println("List"+ SurveyList);
+        return new BaseResponse<>(SurveyList);
+
+    }
+
+    @PostMapping("/posting")
+    public BaseResponse<RequestPost> createPost(@RequestBody RequestPost requestPost) {
+        RequestPost returnPost = postService.registerPost(requestPost);
+        return new BaseResponse<>(returnPost);
+
+    }
+
+
 
 
 }

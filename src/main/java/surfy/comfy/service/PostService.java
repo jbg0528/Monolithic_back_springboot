@@ -15,6 +15,7 @@ import surfy.comfy.repository.PostRepository;
 import surfy.comfy.repository.SurveyRepository;
 import surfy.comfy.type.SurveyType;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,11 @@ public class PostService {
     private final BookmarkService bookmarkService;
     private final Logger logger= LoggerFactory.getLogger(PostService.class);
 
+    /**
+     * 내가 작성한 게시글 조회
+     * @param memberId
+     * @return
+     */
     @Transactional
     public List<PostResponse> getMyposts(Long memberId){
 
@@ -46,6 +52,10 @@ public class PostService {
         return myPosts;
     }
 
+    /**
+     * 모든 게시글 조회
+     * @return
+     */
     @Transactional
     public List<PostResponse> getAllPosts(){
         List<Post> allPostList=postRepository.findAll();
@@ -56,6 +66,12 @@ public class PostService {
         return allPosts;
     }
 
+    /**
+     * 게시글 info 조회
+     * @param postId
+     * @param memberId
+     * @return
+     */
     @Transactional
     public GetPostResponse getPost(Long postId,String memberId){
         logger.info("[getPost] - memberId: {}",memberId);
@@ -122,6 +138,12 @@ public class PostService {
 //        return new DeletePostResponse(postId,Long.parseLong(memberId));
 //    }
 
+    /**
+     * 게시글 삭제
+     * @param postId
+     * @param memberId
+     * @return
+     */
     @Transactional
     public DeletePostResponse deletePost(Long postId, String memberId){
         Post post=postRepository.findById(postId).get();
@@ -137,6 +159,12 @@ public class PostService {
 
         return new DeletePostResponse(postId,Long.parseLong(memberId));
     }
+
+    /**
+     * 게시글 검색
+     * @param title
+     * @return
+     */
     @Transactional
     public List<PostResponse> searchPost(String title){
         List<Post> SearchList = postRepository.findByTitleContaining(title);
@@ -148,6 +176,11 @@ public class PostService {
         return search;
     }
 
+    /**
+     * 내 설문지 조회
+     * @param memberId
+     * @return
+     */
     @Transactional
     public List<MySurveyResponse> getMySurvey(Long memberId){
         List<Survey> mySurveyList = surveyRepository.findAllByMember_Id(memberId);
@@ -158,6 +191,12 @@ public class PostService {
         return surveyList;
     }
 
+    /**
+     * 설문 완료된 내 설문지 조회
+     * @param memberId
+     * @param status
+     * @return
+     */
     @Transactional
     public List<MySurveyResponse> getMySurvey(Long memberId, SurveyType status){
         List<Survey> mySurveyList = surveyRepository.findAllByMember_IdAndStatus(memberId,SurveyType.finish);
@@ -168,6 +207,11 @@ public class PostService {
         return surveyList;
     }
 
+    /**
+     * 게시글 등록
+     * @param request
+     * @return
+     */
     @Transactional
     public RequestPost registerPost(RequestPost request){
         Post post=new Post();
@@ -177,6 +221,7 @@ public class PostService {
         post.setContents(request.getContents());
         post.setMember(member);
         post.setSurvey(survey);
+        post.setUploadDate(LocalDate.now());
         return new RequestPost(postRepository.saveAndFlush(post));
     }
 }

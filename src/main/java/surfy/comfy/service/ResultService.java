@@ -65,10 +65,8 @@ public class ResultService {
                 count = count + gridList.size();
             }
         }
-
-        System.out.println(count);
-        Long result = (questionSize * individualId) + count -1;
-        int start = (int)((individualId-1)*questionSize);
+        int result = (int) (individualId * (questionSize + count -1));
+        int start = (int) ((individualId-1)*(questionSize + count -1)) ;
 
         List<Answer> selectedAnswers = new ArrayList<>();
         for(int i = start; i< result; i++){

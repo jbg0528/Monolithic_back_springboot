@@ -66,4 +66,12 @@ public class OAuthController {
 //        return new BaseResponse<>(tokenResponse);
 //    }
 
+    @DeleteMapping("/logout/{memberId}")
+    public BaseResponse<String> logout(@PathVariable(name="memberId")Long memberId){
+        logger.info("[LOGOUT]");
+        String response=oAuthService.logout(memberId);
+
+        return new BaseResponse<>(response);
+    }
+
 }

@@ -37,8 +37,8 @@ public class Survey {
     @OneToMany(mappedBy = "survey",cascade = CascadeType.ALL)
     private List<Essay> essays;
 
-    private LocalDate start;
-    private LocalDate end;
+    private LocalDateTime start;
+    private LocalDateTime end;
 
     private String title;
     private String contents;

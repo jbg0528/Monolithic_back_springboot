@@ -7,7 +7,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import surfy.comfy.auth.oauth.OAuthService;
 import surfy.comfy.data.token.TokenResponse;
+import surfy.comfy.entity.Member;
+import surfy.comfy.entity.Token;
 import surfy.comfy.exception.token.InvalidRefreshToken;
+import surfy.comfy.repository.MemberRepository;
+import surfy.comfy.repository.TokenRepository;
 import surfy.comfy.service.MemberService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +23,8 @@ import java.io.IOException;
 public class JwtTokenInterceptor implements HandlerInterceptor {
     private final JwtTokenProvider jwtTokenProvider;
     private final OAuthService oAuthService;
+    private final TokenRepository tokenRepository;
+    private final MemberRepository memberRepository;
     Logger logger= LoggerFactory.getLogger(JwtTokenInterceptor.class);
 
     // preHandle -> 컨트롤러의 메서드에 매핑된 특정 URI가 호출됐을 때 실행되는 메서드, 컨트롤러를 접근하기 직전에 실행되는 메서드.
@@ -48,8 +54,8 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
             return true;
         }
         // refresh token도 유효하지 않은 경우
-
-
+        Token token=tokenRepository.findByRefreshToken(refreshToken).get();
+        tokenRepository.delete(token);
 //        response.setStatus(401);
 //        response.setHeader("ACCESS_TOKEN", accessToken);
 //        response.setHeader("REFRESH_TOKEN", refreshToken);

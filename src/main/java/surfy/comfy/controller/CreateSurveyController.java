@@ -5,8 +5,6 @@ import lombok.SneakyThrows;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 import surfy.comfy.entity.*;
@@ -16,6 +14,8 @@ import surfy.comfy.type.SurveyType;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,32 +32,37 @@ public class CreateSurveyController {
     private final OptionRepository optionRepository;
     private final GridRepository gridRepository;
     private final EssayRepository essayRepository;
-    private final Logger logger= LoggerFactory.getLogger(CreateSurveyController.class);
     @SneakyThrows
     @Transactional
     @PostMapping("/createsurvey/{memberEmail}")
-    public void CreateSurvey(@RequestBody String data, @PathVariable(name="memberEmail")String memberEmail){
-        logger.info("/createsurvey/ memberEmail: {}",memberEmail);
+    public Long CreateSurvey(@RequestBody String data, @PathVariable(name="memberEmail")String memberEmail){
         Optional<Member> loadmember= memberRepository.findByEmail(memberEmail);
         Member member=loadmember.get();
 
-        logger.info("data: {}",data);
-
         JSONParser parser = new JSONParser();
         JSONObject json=(JSONObject)parser.parse(data);
-        logger.info("json : {}",json);
 
         String intro0=String.valueOf(json.get("intro0"));
         String intro1=String.valueOf(json.get("intro1"));
-
 
         Survey survey=new Survey();
 
         survey.setTitle(intro0);
         survey.setContents(intro1);
         survey.setMember(member);
-        survey.setStatus(SurveyType.notFinish);
+
+        String endtime=String.valueOf(json.get("endtime"));
+        if(endtime.equals("not")){
+            survey.setStatus(SurveyType.notFinish);
+        }
+        else{
+            survey.setStatus(SurveyType.surveying);
+            LocalDate end=LocalDate.parse(endtime);
+            survey.setEnd(end.atTime(0,0));
+        }
         CreateSurveyDB(json,survey,member);
+
+        return survey.getId();
     }
     @SneakyThrows
     @Transactional
@@ -72,7 +77,7 @@ public class CreateSurveyController {
     @SneakyThrows
     @Transactional
     @PostMapping("/editsurvey/{surveyId}/{memberEmail}")
-    public void EditSurvey(@RequestBody String data,@PathVariable(name="surveyId")Long surveyId, @PathVariable(name="memberEmail")String memberEmail){
+    public Long EditSurvey(@RequestBody String data,@PathVariable(name="surveyId")Long surveyId, @PathVariable(name="memberEmail")String memberEmail){
         Optional<Member> loadmember= memberRepository.findByEmail(memberEmail);
         Member member=loadmember.get();
 
@@ -82,7 +87,16 @@ public class CreateSurveyController {
             JSONParser parser = new JSONParser();
             JSONObject json=(JSONObject)parser.parse(data);
 
+            String endtime=String.valueOf(json.get("endtime"));
+            if(endtime.equals("not")){
+                survey.setStatus(SurveyType.notFinish);
+            }
+            else{
+                survey.setStatus(SurveyType.surveying);
+            }
+
             EditSurveyDB(json,survey,member);
+            return survey.getId();
         }
         else{
             Survey survey=new Survey();
@@ -90,19 +104,25 @@ public class CreateSurveyController {
             JSONParser parser = new JSONParser();
             JSONObject json=(JSONObject)parser.parse(data);
 
-            logger.info("json : {}",json);
             String intro0=String.valueOf(json.get("intro0"));
             String intro1=String.valueOf(json.get("intro1"));
 
             survey.setTitle(intro0);
             survey.setContents(intro1);
             survey.setMember(member);
-            survey.setStatus(SurveyType.notFinish);
+
+            String endtime=String.valueOf(json.get("endtime"));
+            if(endtime.equals("not")){
+                survey.setStatus(SurveyType.notFinish);
+            }
+            else{
+                survey.setStatus(SurveyType.surveying);
+            }
 
             CreateSurveyDB(json,survey,member);
+            return survey.getId();
         }
     }
-
     @Transactional
     public void CreateSurveyDB(JSONObject json,Survey survey,Member member){
         JSONArray ques_list=(JSONArray) json.get("ques_list");

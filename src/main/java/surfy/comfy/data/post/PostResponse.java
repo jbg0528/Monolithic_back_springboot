@@ -6,17 +6,22 @@ import lombok.NoArgsConstructor;
 import surfy.comfy.entity.Bookmark;
 import surfy.comfy.entity.Post;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor @NoArgsConstructor
 public class PostResponse {
     private String title;
     private String author;
     private Long postId;
+    private LocalDate uploadDate;
+
 //    private String type; // 북마크 or 커뮤니티 글(내가 작성한 글 + 커뮤니티 글)
     public PostResponse(Post post){
         this.title=post.getTitle();
         this.author=post.getMember().getName();
         this.postId=post.getId();
+        this.uploadDate=post.getUploadDate();
 //        this.type="post";
     }
 
@@ -24,6 +29,7 @@ public class PostResponse {
         this.title=bookmark.getPost().getTitle();
         this.author=bookmark.getPost().getMember().getName();
         this.postId= bookmark.getPost().getId();
+        this.uploadDate=bookmark.getPost().getUploadDate();
 //        this.type="bookmark";
     }
 }

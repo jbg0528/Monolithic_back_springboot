@@ -6,29 +6,17 @@ import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import org.springframework.web.bind.annotation.*;
 import surfy.comfy.config.BaseResponse;
+import surfy.comfy.entity.Member;
+import surfy.comfy.repository.MemberRepository;
 import surfy.comfy.service.LoadSurveyService;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 public class LoadSurveyContoller {
 
     private final LoadSurveyService loadSurveyService;
-
-    @SneakyThrows
-    @PostMapping("/respondentSurvey")
-    public void LoadSurveyData(@RequestBody String data){
-        JSONParser parser = new JSONParser();
-        JSONObject json=(JSONObject)parser.parse(data);
-
-        String res_type=String.valueOf(json.get("res_type"));
-        if(res_type.equals("RespondentSurvey")){
-
-        }
-        else if(res_type.equals("CompleteSurvey")){
-
-        }
-    }
-
     @SneakyThrows
     @GetMapping("/editsurvey/{surveyId}")
     public BaseResponse<JSONObject> SendEditSurveyData(@PathVariable(name="surveyId")Long surveyId){

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 import surfy.comfy.auth.JwtTokenProvider;
 import surfy.comfy.data.token.TokenResponse;
 import surfy.comfy.entity.Member;
@@ -80,6 +81,7 @@ public class OAuthService {
                 Token token=new Token();
                 token.setMember(member);
                 token.setRefreshToken(jwtRefreshToken);
+                tokenRepository.save(token);
                 //logger.info("[로그인] - refresh token 재발급");
                 TokenResponse tokenResponse=new TokenResponse(jwtAccessToken,jwtRefreshToken,member.getId(),member.getName(),member.getEmail());
 
@@ -131,10 +133,10 @@ public class OAuthService {
         Member member = googleUser.toUserSignUp();
         memberRepository.save(member);
 
-        Token token=new Token();
-        token.setMember(member);
-        token.setRefreshToken(refreshToken);
-        tokenRepository.save(token);
+        //Token token=new Token();
+        //token.setMember(member);
+        //token.setRefreshToken(refreshToken);
+        //tokenRepository.save(token);
     }
 
     // refresh token으로 access token 재발급
@@ -176,5 +178,13 @@ public class OAuthService {
                 .REFRESH_TOKEN(refreshToken)
                 .build();
     }
+    @Transactional
+    public String logout(Long memberId){
+        Member member=memberRepository.findById(memberId).get();
+        Token token=tokenRepository.findByMember_Id(member.getId()).get();
 
+        tokenRepository.delete(token);
+
+        return "로그아웃 성공";
+    }
 }

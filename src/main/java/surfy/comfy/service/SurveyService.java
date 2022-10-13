@@ -20,6 +20,7 @@ import surfy.comfy.type.SurveyType;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class SurveyService {
     private final OptionRepository optionRepository;
     private final MemberRepository memberRepository;
     private final Logger logger= LoggerFactory.getLogger(SurveyService.class);
+
     /**
      * 마음에 드는 설문지 임시 저장
      * @param surveyId
@@ -136,7 +138,7 @@ public class SurveyService {
 
         List<Survey> surveyList=surveyRepository.findAll();
         for(Survey survey:surveyList){
-            if(survey.getEnd().isBefore(now)) survey.setStatus(SurveyType.finish);
+            if(LocalDate.from(survey.getEnd()).isBefore(now)) survey.setStatus(SurveyType.finish);
         }
     }
 

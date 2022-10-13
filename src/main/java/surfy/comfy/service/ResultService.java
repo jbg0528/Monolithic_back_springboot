@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ResultService {
     private final ResultRepository resultRepository;
+    private final SurveyRepository surveyRepository;
 
     private final QuestionRepository questionRepository;
 
@@ -33,7 +34,7 @@ public class ResultService {
     public Survey getSurveyById(Long surveyId){
         Survey survey = resultRepository.findById(surveyId)
                 .orElseThrow(()-> new ResourceNotFoundException("Survey not exist with id :" + surveyId));
-
+        System.out.println("survey satisfaction: "+survey.getSatisfaction());
         return survey;
     }
 
@@ -137,4 +138,18 @@ public class ResultService {
 //
 //        return questionAnswerResponseList;
 //    }
+
+
+    /**
+     * minseo
+     */
+    @Transactional
+    public String postSatisfaction(Long surveyId,Long memberId,String satisfaction){
+        Survey survey=surveyRepository.findById(surveyId).get();
+        System.out.println("survey Id"+survey.getId());
+        Long s=Long.parseLong(satisfaction);
+        survey.setSatisfaction(s);
+
+        return "만족도 등록 성공";
+    }
 }

@@ -16,7 +16,7 @@ public class PostResponse {
     private Long postId;
     private LocalDate uploadDate;
 
-//    private String type; // 북마크 or 커뮤니티 글(내가 작성한 글 + 커뮤니티 글)
+
     public PostResponse(Post post){
         this.title=post.getTitle();
         this.author=post.getMember().getName();

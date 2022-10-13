@@ -46,4 +46,6 @@ public class Survey {
     @Enumerated(EnumType.STRING)
     private SurveyType status;
 
+    private Long satisfaction;
+
 }

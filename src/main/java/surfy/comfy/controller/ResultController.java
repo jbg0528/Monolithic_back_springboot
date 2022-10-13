@@ -61,4 +61,15 @@ public class ResultController {
 
         return new BaseResponse<>(answerList);
     }
+
+    /**
+     * minseo
+     */
+    @PostMapping("/resultSurvey/satisfaction/{surveyId}/{memberId}/{satisfaction}")
+    public BaseResponse<String> postMySurveySatisfaction(@PathVariable(name="surveyId")Long surveyId,@PathVariable(name="memberId")Long memberId, @PathVariable(name="satisfaction")String satisfaction){
+        String response=resultService.postSatisfaction(surveyId,memberId,satisfaction);
+
+        return new BaseResponse<>(response);
+    }
+
 }

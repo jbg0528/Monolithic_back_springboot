@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import surfy.comfy.entity.Post;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor @NoArgsConstructor
 public class GetPostResponse {
@@ -19,8 +21,11 @@ public class GetPostResponse {
     private Long authorId;
     private Boolean isBookmarked;
     private Boolean member_case; // true면 회원, false면 비회원
+    private LocalDate uploadDate;
+    private Long mySatisfaction;
+    private int averageSatisfaction;
 
-    public GetPostResponse(Post post,Boolean isBookmarked,Boolean member_case){
+    public GetPostResponse(Post post,Boolean isBookmarked,Boolean member_case,Long mySatisfaction,int averageSatisfaction){
         this.postId=post.getId();
         this.title=post.getTitle();
         this.contents=post.getContents();
@@ -31,6 +36,9 @@ public class GetPostResponse {
         this.authorId=post.getMember().getId();
         this.isBookmarked=isBookmarked;
         this.member_case=member_case;
+        this.uploadDate=post.getUploadDate();
+        this.mySatisfaction=mySatisfaction;
+        this.averageSatisfaction=averageSatisfaction;
     }
 
 }

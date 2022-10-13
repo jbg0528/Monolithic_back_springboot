@@ -9,10 +9,7 @@ import surfy.comfy.data.post.*;
 import surfy.comfy.entity.*;
 import surfy.comfy.exception.post.CannotDeletePost;
 import surfy.comfy.exception.post.DeleteInvalidUser;
-import surfy.comfy.repository.BookmarkRepository;
-import surfy.comfy.repository.MemberRepository;
-import surfy.comfy.repository.PostRepository;
-import surfy.comfy.repository.SurveyRepository;
+import surfy.comfy.repository.*;
 import surfy.comfy.type.SurveyType;
 
 import java.time.LocalDate;
@@ -31,10 +28,13 @@ public class PostService {
     private final SurveyRepository surveyRepository;
     private final MemberRepository memberRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final SatisfactionRepository satisfactionRepository;
     private final BookmarkService bookmarkService;
     private final Logger logger= LoggerFactory.getLogger(PostService.class);
 
+
     /**
+     * minseo
      * 내가 작성한 게시글 조회
      * @param memberId
      * @return
@@ -54,7 +54,7 @@ public class PostService {
 
     /**
      * 모든 게시글 조회
-     * @return
+     * @return allPosts
      */
     @Transactional
     public List<PostResponse> getAllPosts(){
@@ -67,6 +67,7 @@ public class PostService {
     }
 
     /**
+     * minseo
      * 게시글 info 조회
      * @param postId
      * @param memberId
@@ -77,8 +78,17 @@ public class PostService {
         logger.info("[getPost] - memberId: {}",memberId);
 
         Post post=postRepository.findById(postId).get();
+        List<Satisfaction> allSatisfactions=satisfactionRepository.findAllBySurvey_Id(post.getSurvey().getId());
+        Long total=0L;
+
+        for(Satisfaction s:allSatisfactions){
+            total+=s.getPercent();
+        }
+        int average= total.intValue()/allSatisfactions.size();
+        System.out.println("satisfaction average: "+average);
         Boolean isBookmarked=false;
         Boolean member_case=false;
+
 
         if(memberId.equals("null")){ // 비회원
             member_case=false;
@@ -95,7 +105,7 @@ public class PostService {
             }
         }
 
-        GetPostResponse response=new GetPostResponse(post,isBookmarked,member_case);
+        GetPostResponse response=new GetPostResponse(post,isBookmarked,member_case,post.getSurvey().getSatisfaction(),average);
 
         return response;
     }
@@ -139,6 +149,7 @@ public class PostService {
 //    }
 
     /**
+     * minseo
      * 게시글 삭제
      * @param postId
      * @param memberId

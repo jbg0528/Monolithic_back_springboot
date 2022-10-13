@@ -7,6 +7,8 @@ import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
+import surfy.comfy.config.BaseResponse;
+import surfy.comfy.data.ThumbnailRequest;
 import surfy.comfy.entity.*;
 import surfy.comfy.repository.*;
 import surfy.comfy.type.QuestionType;
@@ -14,6 +16,7 @@ import surfy.comfy.type.SurveyType;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,37 +35,45 @@ public class CreateSurveyController {
     private final OptionRepository optionRepository;
     private final GridRepository gridRepository;
     private final EssayRepository essayRepository;
-    @SneakyThrows
-    @Transactional
-    @PostMapping("/createsurvey/{memberEmail}")
-    public Long CreateSurvey(@RequestBody String data, @PathVariable(name="memberEmail")String memberEmail){
-        Optional<Member> loadmember= memberRepository.findByEmail(memberEmail);
-        Member member=loadmember.get();
+//    @SneakyThrows
+//    @Transactional
+//    @PostMapping("/createsurvey/{memberEmail}")
+//    public Long CreateSurvey(@RequestBody String data, @PathVariable(name="memberEmail")String memberEmail){
+//        Optional<Member> loadmember= memberRepository.findByEmail(memberEmail);
+//        Member member=loadmember.get();
+//
+//        JSONParser parser = new JSONParser();
+//        JSONObject json=(JSONObject)parser.parse(data);
+//
+//        String intro0=String.valueOf(json.get("intro0"));
+//        String intro1=String.valueOf(json.get("intro1"));
+//
+//        Survey survey=new Survey();
+//
+//        survey.setTitle(intro0);
+//        survey.setContents(intro1);
+//        survey.setMember(member);
+//
+//        String endtime=String.valueOf(json.get("endtime"));
+//        if(endtime.equals("not")){
+//            survey.setStatus(SurveyType.notFinish);
+//        }
+//        else{
+//            survey.setStatus(SurveyType.surveying);
+//            LocalDate end=LocalDate.parse(endtime);
+//            survey.setEnd(end.atTime(0,0));
+//        }
+//        CreateSurveyDB(json,survey,member);
+//
+//        return survey.getId();
+//    }
+    @PostMapping("/createsurvey")
+    public BaseResponse<String> postThumbnail(@RequestBody ThumbnailRequest request){
+        System.out.println("email: "+request.getEmail());
+        System.out.println("request: "+request);
+        String binaryData=request.getImgSrc();
 
-        JSONParser parser = new JSONParser();
-        JSONObject json=(JSONObject)parser.parse(data);
-
-        String intro0=String.valueOf(json.get("intro0"));
-        String intro1=String.valueOf(json.get("intro1"));
-
-        Survey survey=new Survey();
-
-        survey.setTitle(intro0);
-        survey.setContents(intro1);
-        survey.setMember(member);
-
-        String endtime=String.valueOf(json.get("endtime"));
-        if(endtime.equals("not")){
-            survey.setStatus(SurveyType.notFinish);
-        }
-        else{
-            survey.setStatus(SurveyType.surveying);
-            LocalDate end=LocalDate.parse(endtime);
-            survey.setEnd(end.atTime(0,0));
-        }
-        CreateSurveyDB(json,survey,member);
-
-        return survey.getId();
+        return new BaseResponse<>("ggg");
     }
     @SneakyThrows
     @Transactional

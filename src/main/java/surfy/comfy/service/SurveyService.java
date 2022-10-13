@@ -38,6 +38,7 @@ public class SurveyService {
     private final Logger logger= LoggerFactory.getLogger(SurveyService.class);
 
     /**
+     * minseo
      * 마음에 드는 설문지 임시 저장
      * @param surveyId
      * @param memberId
@@ -124,6 +125,7 @@ public class SurveyService {
 
 
     /**
+     * minseo
      * 주기적으로 설문지 상태 업데이트
      */
 //    @Scheduled(cron = "0 00 5 * * *") // 매일 오전 5:00에 실행되는 스케줄링

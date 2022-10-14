@@ -23,7 +23,7 @@ public class Member {
     //private String password;
     private String name;
 
-    @JsonManagedReference
+
     @OneToMany(mappedBy="member",cascade = CascadeType.ALL)
     private List<Post> posts;
 

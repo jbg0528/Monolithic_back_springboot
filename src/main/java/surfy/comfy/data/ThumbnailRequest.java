@@ -6,4 +6,5 @@ import lombok.Data;
 public class ThumbnailRequest {
     private String imgSrc;
     private String email;
+    private String bgColor;
 }

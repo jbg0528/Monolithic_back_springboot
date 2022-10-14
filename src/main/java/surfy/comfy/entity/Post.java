@@ -16,12 +16,12 @@ public class Post {
     @Column(name="post_id")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JsonBackReference
     @JoinColumn(name="member_id")
     private Member member;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JsonBackReference
     @JoinColumn(name="survey_id")
     private Survey survey;

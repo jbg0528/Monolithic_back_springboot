@@ -167,7 +167,6 @@ public class PostService {
 
         postRepository.delete(post);
 
-
         return new DeletePostResponse(postId,Long.parseLong(memberId));
     }
 

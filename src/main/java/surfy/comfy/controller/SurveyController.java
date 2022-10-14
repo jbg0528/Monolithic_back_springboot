@@ -22,6 +22,7 @@ public class SurveyController {
     private final Logger logger= LoggerFactory.getLogger(SurveyController.class);
 
     /**
+     * minseo
      * 마음에 드는 설문지 임시 저장
      * @param surveyId
      * @param memberId

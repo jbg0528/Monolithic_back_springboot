@@ -38,12 +38,15 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
         String refreshToken = request.getHeader("REFRESH_TOKEN");
         logger.info("RefreshToken: {}",refreshToken);
 
+        if(accessToken.equals("null") && refreshToken.equals("null")){
+            logger.info("tokens are null");
+            throw new InvalidRefreshToken();
 
-        if (accessToken != null && jwtTokenProvider.isValidAccessToken(accessToken)) {
+        }
+        else if (!accessToken.equals("null") && jwtTokenProvider.isValidAccessToken(accessToken)) { // 유효한 accessToken
             logger.info(">JwtTokenInterceptor - isValidAccessToken");
             return true;
         }
-
         // access token은 유효하지 않고, refresh token은 유효한 경우
         else if(!jwtTokenProvider.isValidAccessToken(accessToken)&&jwtTokenProvider.isValidRefreshToken(refreshToken)){
             logger.info(">JwtTokenInterceptor - invalid AccessToken && valid RefreshToken");
@@ -54,14 +57,18 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
             return true;
         }
         // refresh token도 유효하지 않은 경우
-        Token token=tokenRepository.findByRefreshToken(refreshToken).get();
-        tokenRepository.delete(token);
+        else{
+            Token token=tokenRepository.findByRefreshToken(refreshToken).get();
+            logger.info("try to delete token");
+            tokenRepository.delete(token);
+            throw new InvalidRefreshToken();
+        }
+
 //        response.setStatus(401);
 //        response.setHeader("ACCESS_TOKEN", accessToken);
 //        response.setHeader("REFRESH_TOKEN", refreshToken);
 //        response.setHeader("msg", "Check the tokens.");
 //        logger.info("response: {}",response);
-        throw new InvalidRefreshToken();
         //return true;
         //return false;
     }

@@ -35,46 +35,72 @@ public class CreateSurveyController {
     private final OptionRepository optionRepository;
     private final GridRepository gridRepository;
     private final EssayRepository essayRepository;
-//    @SneakyThrows
-//    @Transactional
-//    @PostMapping("/createsurvey/{memberEmail}")
-//    public Long CreateSurvey(@RequestBody String data, @PathVariable(name="memberEmail")String memberEmail){
-//        Optional<Member> loadmember= memberRepository.findByEmail(memberEmail);
-//        Member member=loadmember.get();
-//
-//        JSONParser parser = new JSONParser();
-//        JSONObject json=(JSONObject)parser.parse(data);
-//
-//        String intro0=String.valueOf(json.get("intro0"));
-//        String intro1=String.valueOf(json.get("intro1"));
-//
-//        Survey survey=new Survey();
-//
-//        survey.setTitle(intro0);
-//        survey.setContents(intro1);
-//        survey.setMember(member);
-//
-//        String endtime=String.valueOf(json.get("endtime"));
-//        if(endtime.equals("not")){
-//            survey.setStatus(SurveyType.notFinish);
-//        }
-//        else{
-//            survey.setStatus(SurveyType.surveying);
-//            LocalDate end=LocalDate.parse(endtime);
-//            survey.setEnd(end.atTime(0,0));
-//        }
-//        CreateSurveyDB(json,survey,member);
-//
-//        return survey.getId();
-//    }
+    @SneakyThrows
+    @Transactional
+    @PostMapping("/createsurvey/{memberEmail}")
+    public Long CreateSurvey(@RequestBody String data, @PathVariable(name="memberEmail")String memberEmail){
+        Optional<Member> loadmember= memberRepository.findByEmail(memberEmail);
+        Member member=loadmember.get();
+
+        JSONParser parser = new JSONParser();
+        JSONObject json=(JSONObject)parser.parse(data);
+
+        String intro0=String.valueOf(json.get("intro0"));
+        String intro1=String.valueOf(json.get("intro1"));
+
+        Survey survey=new Survey();
+
+        survey.setTitle(intro0);
+        survey.setContents(intro1);
+        survey.setMember(member);
+
+        String endtime=String.valueOf(json.get("endtime"));
+        if(endtime.equals("not")){
+            survey.setStatus(SurveyType.notFinish);
+        }
+        else{
+            survey.setStatus(SurveyType.surveying);
+            LocalDate end=LocalDate.parse(endtime);
+            survey.setEnd(end.atTime(0,0));
+        }
+        CreateSurveyDB(json,survey,member);
+
+        return survey.getId();
+    }
+
+    /**
+     * minseo
+     * @param request
+     * @return
+     */
     @PostMapping("/createsurvey")
     public BaseResponse<String> postThumbnail(@RequestBody ThumbnailRequest request){
         System.out.println("email: "+request.getEmail());
-        System.out.println("request: "+request);
+        System.out.println("imgSrc: "+request.getImgSrc());
+        System.out.println("imgSrc: "+request.getBgColor());
+
         String binaryData=request.getImgSrc();
 
         return new BaseResponse<>("ggg");
     }
+
+    /**
+     * minseo
+     * @param request
+     * @return
+     */
+    @PatchMapping("/createsurvey")
+    public BaseResponse<String> patchThumbnail(@RequestBody ThumbnailRequest request){
+        System.out.println("email: "+request.getEmail());
+        System.out.println("imgSrc: "+request.getImgSrc());
+        System.out.println("bgColor: "+request.getBgColor());
+
+        String binaryData=request.getImgSrc();
+
+        return new BaseResponse<>("ggg");
+    }
+
+
     @SneakyThrows
     @Transactional
     @PostMapping("/respondentSurvey/{surveyId}")
@@ -85,6 +111,9 @@ public class CreateSurveyController {
 
         CreateAnswerDB(json,survey);
     }
+
+
+
     @SneakyThrows
     @Transactional
     @PostMapping("/editsurvey/{surveyId}/{memberEmail}")

@@ -11,6 +11,7 @@ import surfy.comfy.entity.Post;
 import surfy.comfy.repository.PostRepository;
 import surfy.comfy.service.BookmarkService;
 import surfy.comfy.service.PostService;
+import surfy.comfy.type.SurveyType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class PostController {
     private final Logger logger= LoggerFactory.getLogger(PostController.class);
 
     /**
+     * minseo
      * 마이 페이지 조회
      * @param memberId
      * @return MyPageResponse
@@ -56,6 +58,7 @@ public class PostController {
     }
 
     /**
+     * minseo
      * 게시글 조회
      * @param postId
      * @return memberId
@@ -78,7 +81,7 @@ public class PostController {
      */
     @DeleteMapping("/post/{postId}/{memberId}")
     public BaseResponse<DeletePostResponse> deletePost(@PathVariable(name="postId")Long postId,@PathVariable(name="memberId")String memberId){
-        //logger.info("[deletePost]: {}",postService.deletePost(postId,memberId));
+        logger.info("[deletePost]: {}",postId);
         DeletePostResponse response= postService.deletePost(postId,memberId);
         logger.info("[deletePost]: {}",response);
         return new BaseResponse<>(response);
@@ -99,8 +102,8 @@ public class PostController {
     }
 
     @GetMapping("/selectSurvey/{memberId}")
-    public BaseResponse<List<MySurveyResponse>> selectSurvey(@PathVariable(name="memberId")Long memberId){
-        List<MySurveyResponse> SurveyList = postService.getMySurvey(memberId);
+    public BaseResponse<List<MySurveyResponse>> selectSurvey(@PathVariable(name="memberId")Long memberId, SurveyType status){
+        List<MySurveyResponse> SurveyList = postService.getMySurvey(memberId,status);
         System.out.println("List"+ SurveyList);
         return new BaseResponse<>(SurveyList);
 

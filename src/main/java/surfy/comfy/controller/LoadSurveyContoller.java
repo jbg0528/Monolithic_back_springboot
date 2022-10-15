@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import surfy.comfy.config.BaseResponse;
 import surfy.comfy.entity.Member;
@@ -17,11 +19,12 @@ import java.util.Optional;
 public class LoadSurveyContoller {
 
     private final LoadSurveyService loadSurveyService;
+    private final Logger logger= LoggerFactory.getLogger(LoadSurveyContoller.class);
     @SneakyThrows
     @GetMapping("/editsurvey/{surveyId}")
     public BaseResponse<JSONObject> SendEditSurveyData(@PathVariable(name="surveyId")Long surveyId){
         String result= loadSurveyService.getSurveydata(surveyId);
-
+        logger.info("editSurvey - surveyId: {}",surveyId);
         JSONParser jsonparser=new JSONParser();
         JSONObject jsonObject=(JSONObject) jsonparser.parse(result);
 

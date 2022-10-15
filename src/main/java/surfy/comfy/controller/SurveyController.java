@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import surfy.comfy.config.BaseResponse;
 import surfy.comfy.data.manage.DeleteSurveyResponse;
+import surfy.comfy.data.manage.FinishSurveyResponse;
 import surfy.comfy.data.manage.SurveyResponse;
 import surfy.comfy.data.survey.GetSurveyResponse;
 import surfy.comfy.data.survey.PostSurveyResponse;
+import surfy.comfy.entity.Survey;
 import surfy.comfy.service.SurveyService;
 
 import java.util.ArrayList;
@@ -63,5 +65,28 @@ public class SurveyController {
         return new BaseResponse<>(response);
     }
 
+//    @GetMapping("/survey/{surveyId}")
+//    public BaseResponse<SurveyResponse> getSurveyById(@PathVariable(name="surveyId") Long surveyId){
+//        logger.info("[SurveyController] getSurveyById - surveyId: {}",surveyId);
+//        SurveyResponse response=surveyService.getSurvey(surveyId);
+//
+//        return new BaseResponse<>(response);
+//    }
+
+
+
+    /**
+     * 정규
+     * 설문지 상태바꾸기 api
+     * @param surveyId
+     * @return
+     */
+    @PutMapping("/surveyPage/{surveyId}")
+    public BaseResponse<FinishSurveyResponse> finishSurvey(@PathVariable(name = "surveyId") Long surveyId){
+
+        FinishSurveyResponse response = surveyService.finishSurvey(surveyId);
+
+        return new BaseResponse<>(response);
+    }
 
  }

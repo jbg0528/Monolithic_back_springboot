@@ -6,11 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import surfy.comfy.config.BaseResponse;
 import surfy.comfy.data.bookmark.PostBookmarkResponse;
+import surfy.comfy.data.manage.SurveyResponse;
 import surfy.comfy.data.post.*;
 import surfy.comfy.entity.Post;
 import surfy.comfy.repository.PostRepository;
 import surfy.comfy.service.BookmarkService;
 import surfy.comfy.service.PostService;
+import surfy.comfy.service.SurveyService;
 import surfy.comfy.type.SurveyType;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final SurveyService surveyService;
     private final BookmarkService bookmarkService;
     private final PostRepository postRepository;
 
@@ -117,6 +120,13 @@ public class PostController {
     }
 
 
+    @GetMapping("/createPost/{surveyId}")
+    public BaseResponse<List<SurveyResponse>> getSurvey(@PathVariable(name="surveyId")Long surveyId){
+        List<SurveyResponse> SurveyList = surveyService.getSurvey(surveyId);
+        System.out.println("List"+ SurveyList);
+        return new BaseResponse<>(SurveyList);
+
+    }
 
 
 }

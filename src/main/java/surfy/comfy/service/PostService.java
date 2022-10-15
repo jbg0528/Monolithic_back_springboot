@@ -80,12 +80,19 @@ public class PostService {
         Post post=postRepository.findById(postId).get();
         List<Satisfaction> allSatisfactions=satisfactionRepository.findAllBySurvey_Id(post.getSurvey().getId());
         Long total=0L;
+        int average;
 
-        for(Satisfaction s:allSatisfactions){
-            total+=s.getPercent();
+        if(allSatisfactions.size()==0){
+            average=0;
         }
-        int average= total.intValue()/allSatisfactions.size();
-        System.out.println("satisfaction average: "+average);
+        else{
+            for(Satisfaction s:allSatisfactions){
+                total+=s.getPercent();
+            }
+            average= total.intValue()/allSatisfactions.size();
+            System.out.println("satisfaction average: "+average);
+        }
+
         Boolean isBookmarked=false;
         Boolean member_case=false;
 

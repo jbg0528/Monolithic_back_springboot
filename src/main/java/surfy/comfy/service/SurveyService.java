@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import surfy.comfy.data.manage.DeleteSurveyResponse;
+import surfy.comfy.data.manage.FinishSurveyResponse;
 import surfy.comfy.data.manage.SurveyResponse;
 import surfy.comfy.data.post.MySurveyResponse;
 import surfy.comfy.data.survey.GetSurveyResponse;
@@ -144,4 +145,36 @@ public class SurveyService {
         }
     }
 
+//    /**
+//     * surveyId로 설문지 정보 조회
+//     */
+//    @Transactional
+//    public SurveyResponse getSurvey(Long surveyId){
+//        Survey survey=surveyRepository.findById(surveyId).get();
+//
+//        return new SurveyResponse(survey);
+//
+//    }
+
+    //설문지 상태 update
+    @Transactional
+    public FinishSurveyResponse finishSurvey(Long surveyId){
+        Survey survey = surveyRepository.findById(surveyId).get();
+
+        survey.setStatus(SurveyType.finish);
+
+        return new FinishSurveyResponse(surveyId);
+    }
+
+    //Survey id - 설문지 가져오기
+    @Transactional
+    public List<SurveyResponse> getSurvey(Long surveyId){
+
+        List<Survey> Survey = surveyRepository.findSurveyById(surveyId);
+        List<SurveyResponse> mySurvey = Survey.stream()
+                .map(p -> new SurveyResponse(p))
+                .collect(Collectors.toList());
+
+        return mySurvey;
+    }
 }

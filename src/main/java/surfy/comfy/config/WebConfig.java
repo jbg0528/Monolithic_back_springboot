@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
         // TODO: jwt interceptor addPathPatterns 수정 필요
         registry.addInterceptor(jwtTokenInterceptor)
                 .addPathPatterns("/myPage/**")
-                .addPathPatterns("/survey/**")
+                //.addPathPatterns("/survey/**")
                 .addPathPatterns("/surveyPage/**")
                 .addPathPatterns("/selectSurvey/**")
                 //.addPathPatterns("/created-survey/**")
@@ -45,6 +45,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .allowedMethods(
                         HttpMethod.GET.name(),
+                        HttpMethod.PATCH.name(),
                         HttpMethod.HEAD.name(),
                         HttpMethod.POST.name(),
                         HttpMethod.PUT.name(),

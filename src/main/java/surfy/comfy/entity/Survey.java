@@ -48,4 +48,5 @@ public class Survey {
 
     private Long satisfaction;
     private String bgColor;
+    private String thumbnail;
 }

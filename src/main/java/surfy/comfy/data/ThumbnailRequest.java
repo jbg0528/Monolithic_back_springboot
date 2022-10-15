@@ -7,4 +7,5 @@ public class ThumbnailRequest {
     private String imgSrc;
     private String email;
     private String bgColor;
+    private Long surveyId;
 }

@@ -11,6 +11,7 @@ import surfy.comfy.config.BaseResponse;
 import surfy.comfy.data.ThumbnailRequest;
 import surfy.comfy.entity.*;
 import surfy.comfy.repository.*;
+import surfy.comfy.service.SurveyService;
 import surfy.comfy.type.QuestionType;
 import surfy.comfy.type.SurveyType;
 
@@ -35,10 +36,11 @@ public class CreateSurveyController {
     private final OptionRepository optionRepository;
     private final GridRepository gridRepository;
     private final EssayRepository essayRepository;
+    private final SurveyService surveyService;
     @SneakyThrows
     @Transactional
     @PostMapping("/createsurvey/{memberEmail}")
-    public Long CreateSurvey(@RequestBody String data, @PathVariable(name="memberEmail")String memberEmail){
+    public BaseResponse<Long> CreateSurvey(@RequestBody String data, @PathVariable(name="memberEmail")String memberEmail){
         Optional<Member> loadmember= memberRepository.findByEmail(memberEmail);
         Member member=loadmember.get();
 
@@ -64,8 +66,9 @@ public class CreateSurveyController {
             survey.setEnd(end.atTime(0,0));
         }
         CreateSurveyDB(json,survey,member);
+        System.out.println("surveyId"+survey.getId());
 
-        return survey.getId();
+        return new BaseResponse<>(survey.getId());
     }
 
     /**
@@ -73,13 +76,14 @@ public class CreateSurveyController {
      * @param request
      * @return
      */
-    @PostMapping("/createsurvey")
+    @PatchMapping("/thumbnail")
     public BaseResponse<String> postThumbnail(@RequestBody ThumbnailRequest request){
         System.out.println("email: "+request.getEmail());
         System.out.println("imgSrc: "+request.getImgSrc());
-        System.out.println("imgSrc: "+request.getBgColor());
+        System.out.println("bgColor: "+request.getBgColor());
+        System.out.println("surveyId: "+request.getSurveyId());
 
-        String binaryData=request.getImgSrc();
+        surveyService.patchSurveyThumbnail(request);
 
         return new BaseResponse<>("ggg");
     }

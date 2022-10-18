@@ -57,7 +57,7 @@ public class SurveyController {
     }
 
     //설문지 삭제 api
-    @DeleteMapping("/surveyPage/{surveyId}/{memberId}")
+    @DeleteMapping("/deleteSurvey/{surveyId}/{memberId}")
     public BaseResponse<DeleteSurveyResponse> deleteSurvey (@PathVariable(name = "surveyId") Long surveyId, @PathVariable(name = "memberId") String memberId){
         DeleteSurveyResponse response = surveyService.deleteSurvey(surveyId, memberId);
 

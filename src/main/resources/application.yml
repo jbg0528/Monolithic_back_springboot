@@ -3,12 +3,12 @@
 spring:
   datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/comfy?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      url: jdbc:mysql://210.109.62.25:3306/comfy?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
       username: root
-      password: mysqlpw12!@
+      password: qwer1234
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -23,7 +23,7 @@ spring:
         url: https://accounts.google.com/o/oauth2/v2/auth
         client-id: 150579669124-iuljf351licgh2lg7s35t1fcn9ct6k2h.apps.googleusercontent.com
         client-secret: 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
-        callback-url: http://localhost:3000/auth/google/callback
+        callback-url: http://210.109.62.25:8080/auth/google/callback
         scope: https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
 
       kakao:

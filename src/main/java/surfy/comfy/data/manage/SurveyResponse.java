@@ -17,6 +17,7 @@ public class SurveyResponse {
     private LocalDateTime start;
     private Long surveyId;
     private SurveyType status; // 설문 상태
+    private String thumbnail;
 
     public SurveyResponse(Survey survey){
         this.title = survey.getTitle();
@@ -24,6 +25,7 @@ public class SurveyResponse {
         this.content = survey.getContents();
         this.status = survey.getStatus();
         this.start = survey.getStart();
+        this.thumbnail= survey.getThumbnail();
     }
 
 }

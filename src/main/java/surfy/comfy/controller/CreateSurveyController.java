@@ -31,6 +31,8 @@ public class CreateSurveyController {
     private final EntityManager em;
     private final MemberRepository memberRepository;
     private final AnswerRespository answerRepository;
+
+    private final SatisfactionRepository satisfactionRepository;
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
     private final OptionRepository optionRepository;
@@ -120,7 +122,7 @@ public class CreateSurveyController {
 
     @SneakyThrows
     @Transactional
-    @PostMapping("/editsurvey/{surveyId}/{memberEmail}")
+    @PostMapping("/createSurvey/{surveyId}/{memberEmail}")
     public Long EditSurvey(@RequestBody String data,@PathVariable(name="surveyId")Long surveyId, @PathVariable(name="memberEmail")String memberEmail){
         Optional<Member> loadmember= memberRepository.findByEmail(memberEmail);
         Member member=loadmember.get();
@@ -261,6 +263,10 @@ public class CreateSurveyController {
             question.setSurvey(survey);
             em.persist(question);
         }
+        Question question=new Question();
+        question.setSurvey(survey);
+        question.setQuestionType(QuestionType.만족도);
+        em.persist(question);
         em.persist(survey);
         em.flush();
     }
@@ -284,8 +290,8 @@ public class CreateSurveyController {
                 satisfaction.setQuestion(question);
                 satisfaction.setPercent(satis);
                 satisfaction.setSurvey(survey);
-                em.persist(satisfaction);
 
+                em.persist(satisfaction);
                 answer.setSatisfaction(satisfaction);
                 em.persist(answer);
                 continue;

@@ -21,7 +21,7 @@ public class LoadSurveyContoller {
     private final LoadSurveyService loadSurveyService;
     private final Logger logger= LoggerFactory.getLogger(LoadSurveyContoller.class);
     @SneakyThrows
-    @GetMapping("/editsurvey/{surveyId}")
+    @GetMapping("/createSurvey/{surveyId}")
     public BaseResponse<JSONObject> SendEditSurveyData(@PathVariable(name="surveyId")Long surveyId){
         String result= loadSurveyService.getSurveydata(surveyId);
         logger.info("editSurvey - surveyId: {}",surveyId);

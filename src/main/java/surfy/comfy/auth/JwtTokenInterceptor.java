@@ -3,6 +3,7 @@ package surfy.comfy.auth;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import surfy.comfy.auth.oauth.OAuthService;
@@ -38,6 +39,9 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
         String refreshToken = request.getHeader("REFRESH_TOKEN");
         logger.info("RefreshToken: {}",refreshToken);
 
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+            return true;
+        }
         if(accessToken.equals("null") && refreshToken.equals("null")){
             logger.info("tokens are null");
             throw new InvalidRefreshToken();

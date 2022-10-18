@@ -50,11 +50,13 @@ public class PostController {
 
 
     /**
+     * 병근
      * 커뮤니티 조회
      * @return List<PostResponse>
      */
     @GetMapping("/community")
     public BaseResponse<List<PostResponse>> community(){
+        logger.info("[Get] - /community");
         List<PostResponse> posts=postService.getAllPosts();
 
         return new BaseResponse<>(posts);

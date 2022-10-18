@@ -98,6 +98,7 @@ public class SurveyService {
     public List<SurveyResponse> getMysurvey(Long memberId){
 
         List<Survey> mySurveyList = surveyRepository.findAllByMember_Id(memberId);
+        logger.info("survey[0] : {}",mySurveyList.get(0).getThumbnail());
         List<SurveyResponse> mySurvey = mySurveyList.stream()
                 .map(p -> new SurveyResponse(p))
                 .collect(Collectors.toList());

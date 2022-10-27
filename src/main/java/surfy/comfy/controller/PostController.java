@@ -38,8 +38,8 @@ public class PostController {
     @GetMapping("/myPage/{memberId}")
     public BaseResponse<MyPageResponse> myPage(@PathVariable(name="memberId")Long memberId) {
         logger.info("mypage - memberId: {}",memberId);
-        List<PostResponse> myPostList = postService.getMyposts(memberId);
-        List<PostResponse> bookmarkList = bookmarkService.getBookmarks(memberId);
+        List<GetPostResponse> myPostList = postService.getMyposts(memberId);
+        List<GetPostResponse> bookmarkList = bookmarkService.getBookmarks(memberId);
         logger.info("bookmarkList: {}",bookmarkList.size());
         MyPageResponse result = new MyPageResponse();
         result.setBookmarks(bookmarkList);
@@ -54,12 +54,24 @@ public class PostController {
      * 커뮤니티 조회
      * @return List<PostResponse>
      */
-    @GetMapping("/community")
-    public BaseResponse<List<PostResponse>> community(){
-        logger.info("[Get] - /community");
-        List<PostResponse> posts=postService.getAllPosts();
+//    @GetMapping("/community")
+//    public BaseResponse<List<PostResponse>> community(){
+//        logger.info("[Get] - /community");
+//        List<PostResponse> posts=postService.getAllPosts();
+//
+//        return new BaseResponse<>(posts);
+//    }
 
-        return new BaseResponse<>(posts);
+    /**
+     * minseo
+     * 커뮤니티 조회 v2
+     */
+    @GetMapping("/community/{memberId}")
+    public BaseResponse<List<GetPostResponse>> community(@PathVariable(name="memberId") Long memberId){
+        logger.info("[GET] - /community");
+        List<GetPostResponse> result=postService.getAllPosts(memberId);
+
+        return new BaseResponse<>(result);
     }
 
     /**

@@ -15,13 +15,14 @@ public class PostResponse {
     private String author;
     private Long postId;
     private LocalDate uploadDate;
-
+    private Long authorId;
 
     public PostResponse(Post post){
         this.title=post.getTitle();
         this.author=post.getMember().getName();
         this.postId=post.getId();
         this.uploadDate=post.getUploadDate();
+        this.authorId=post.getMember().getId();
 //        this.type="post";
     }
 
@@ -30,6 +31,7 @@ public class PostResponse {
         this.author=bookmark.getPost().getMember().getName();
         this.postId= bookmark.getPost().getId();
         this.uploadDate=bookmark.getPost().getUploadDate();
+
 //        this.type="bookmark";
     }
 }

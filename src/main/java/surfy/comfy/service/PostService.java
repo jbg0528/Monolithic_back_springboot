@@ -39,14 +39,28 @@ public class PostService {
      * @param memberId
      * @return
      */
+//    @Transactional
+//    public List<PostResponse> getMyposts(Long memberId){
+//
+//        // 내가 작성한 게시글들들
+//        List<Post> myPostList=postRepository.findAllByMember_Id(memberId);
+//        List<PostResponse> myPosts = myPostList.stream()
+//                .map(p -> new PostResponse(p))
+//                .collect(Collectors.toList());
+//
+//
+//        return myPosts;
+//    }
     @Transactional
-    public List<PostResponse> getMyposts(Long memberId){
+    public List<GetPostResponse> getMyposts(Long memberId){
 
         // 내가 작성한 게시글들들
         List<Post> myPostList=postRepository.findAllByMember_Id(memberId);
-        List<PostResponse> myPosts = myPostList.stream()
-                .map(p -> new PostResponse(p))
-                .collect(Collectors.toList());
+        List<GetPostResponse> myPosts=new ArrayList<>();
+        for(Post p:myPostList){
+            GetPostResponse my=new GetPostResponse(p,false,true);
+            myPosts.add(my);
+        }
 
 
         return myPosts;
@@ -57,12 +71,35 @@ public class PostService {
      * @return allPosts
      */
     @Transactional
-    public List<PostResponse> getAllPosts(){
+    public List<GetPostResponse> getAllPosts(Long memberId){
         List<Post> allPostList=postRepository.findAll();
-        List<PostResponse> allPosts=allPostList.stream()
-                .map(p->new PostResponse(p))
-                .collect(Collectors.toList());
+        List<GetPostResponse> allPosts=new ArrayList<>();
 
+        Boolean member_case=false;
+        Boolean isBookmarked=false;
+
+        if(memberId==0) {
+            member_case=false;
+            for(Post p:allPostList){
+                GetPostResponse post=new GetPostResponse(p,isBookmarked,member_case);
+                allPosts.add(post);
+            }
+            return allPosts;
+        }
+        else member_case=true;
+
+        for(Post p: allPostList){
+            Bookmark bookmark=bookmarkRepository.findByMember_IdAndPost_Id(memberId,p.getId());
+
+            if(bookmark==null){
+                isBookmarked=false;
+            }
+            else{
+                isBookmarked=true;
+            }
+            GetPostResponse post=new GetPostResponse(p,isBookmarked,member_case);
+            allPosts.add(post);
+        }
         return allPosts;
     }
 

@@ -41,4 +41,18 @@ public class GetPostResponse {
         this.averageSatisfaction=averageSatisfaction;
     }
 
+    public GetPostResponse(Post post,Boolean isBookmarked,Boolean member_case){
+        this.postId=post.getId();
+        this.title=post.getTitle();
+        this.contents=post.getContents();
+        //this.thumbnail=post.getThumbnail();
+        this.surveyId=post.getSurvey().getId();
+        this.surveyTitle=post.getSurvey().getTitle();
+        this.authorName=post.getMember().getName();
+        this.authorId=post.getMember().getId();
+        this.isBookmarked=isBookmarked;
+        this.member_case=member_case;
+        this.uploadDate=post.getUploadDate();
+    }
+
 }

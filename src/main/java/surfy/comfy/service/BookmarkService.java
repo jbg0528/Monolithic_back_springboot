@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import surfy.comfy.data.bookmark.PostBookmarkResponse;
+import surfy.comfy.data.post.GetPostResponse;
 import surfy.comfy.data.post.PostResponse;
 import surfy.comfy.entity.Bookmark;
 import surfy.comfy.entity.Member;
@@ -11,6 +12,7 @@ import surfy.comfy.repository.BookmarkRepository;
 import surfy.comfy.repository.MemberRepository;
 import surfy.comfy.repository.PostRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,15 +29,26 @@ public class BookmarkService {
      * @param memberId
      * @return
      */
+//    @Transactional
+//    public List<PostResponse> getBookmarks(Long memberId){
+//
+//        // 내가 북마크한 게시글들
+//        List<Bookmark> bookmarkList=bookmarkRepository.findAllByMember_Id(memberId);
+//        List<PostResponse> bookmarks=bookmarkList.stream()
+//                .map(b->new PostResponse(b))
+//                .collect(Collectors.toList());
+//
+//        return bookmarks;
+//    }
     @Transactional
-    public List<PostResponse> getBookmarks(Long memberId){
-
-        // 내가 북마크한 게시글들
+    public List<GetPostResponse> getBookmarks(Long memberId){
         List<Bookmark> bookmarkList=bookmarkRepository.findAllByMember_Id(memberId);
-        List<PostResponse> bookmarks=bookmarkList.stream()
-                .map(b->new PostResponse(b))
-                .collect(Collectors.toList());
+        List<GetPostResponse> bookmarks=new ArrayList<>();
 
+        for(Bookmark b:bookmarkList){
+            GetPostResponse post=new GetPostResponse(b.getPost(),true,true);
+            bookmarks.add(post);
+        }
         return bookmarks;
     }
 

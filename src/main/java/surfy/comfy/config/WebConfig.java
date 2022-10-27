@@ -19,11 +19,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     public void addInterceptors(InterceptorRegistry registry) {
         // TODO: jwt interceptor addPathPatterns 수정 필요
-        registry.addInterceptor(jwtTokenInterceptor)
-                .addPathPatterns("/myPage/**")
+        //registry.addInterceptor(jwtTokenInterceptor)
+                //.addPathPatterns("/myPage/**")
                 //.addPathPatterns("/survey/**")
-                .addPathPatterns("/surveyPage/**")
-                .addPathPatterns("/selectSurvey/**")
+               // .addPathPatterns("/surveyPage/**")
+                //.addPathPatterns("/selectSurvey/**")
                 //.addPathPatterns("/created-survey/**")
                 //.addPathPatterns("/createSurvey/**")
                 //.addPathPatterns("/editsurvey/**")

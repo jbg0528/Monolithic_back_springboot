@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor @NoArgsConstructor
 public class MyPageResponse {
-    private List<PostResponse> bookmarks;
-    private List<PostResponse> myposts;
+    private List<GetPostResponse> bookmarks;
+    private List<GetPostResponse> myposts;
 }

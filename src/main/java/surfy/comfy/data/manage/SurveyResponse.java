@@ -17,7 +17,7 @@ public class SurveyResponse {
     private LocalDateTime start;
     private Long surveyId;
     private SurveyType status; // 설문 상태
-    private String thumbnail;
+    private Long thumbnail;
     private int satisfaction;
 
     public SurveyResponse(Survey survey){
@@ -26,7 +26,7 @@ public class SurveyResponse {
         this.content = survey.getContents();
         this.status = survey.getStatus();
         this.start = survey.getStart();
-        this.thumbnail= "images/"+survey.getThumbnail()+".jpg";
+        this.thumbnail= survey.getThumbnail();
     }
 
     public SurveyResponse(Survey survey,int average){
@@ -35,7 +35,7 @@ public class SurveyResponse {
         this.content = survey.getContents();
         this.status = survey.getStatus();
         this.start = survey.getStart();
-        this.thumbnail= "images/"+survey.getThumbnail()+".jpg";
+        this.thumbnail= survey.getThumbnail();
         this.satisfaction=average;
     }
 

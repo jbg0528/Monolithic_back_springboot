@@ -112,7 +112,7 @@ public class PostService {
      * @return
      */
     @Transactional
-    public GetPostResponse getPost(Long postId,String memberId){
+    public GetPostResponse getPost(Long postId,Long memberId){
         logger.info("[getPost] - memberId: {}",memberId);
 
         Post post=postRepository.findById(postId).get();
@@ -135,11 +135,11 @@ public class PostService {
         Boolean member_case=false;
 
 
-        if(memberId.equals("null")){ // 비회원
+        if(memberId==(long)0){ // 비회원
             member_case=false;
         }
         else{ // 회원
-            Long member_id=Long.parseLong(memberId);
+            Long member_id=memberId;
             member_case=true;
             Bookmark bookmark=bookmarkRepository.findByMember_IdAndPost_Id(member_id,postId);
             if(bookmark==null){

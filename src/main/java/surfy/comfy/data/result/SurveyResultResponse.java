@@ -9,6 +9,7 @@ import surfy.comfy.entity.Survey;
 @NoArgsConstructor
 public class SurveyResultResponse {
 
+    private Long id;
     private String title;
     private String contents;
     private Long satisfaction;
@@ -16,6 +17,7 @@ public class SurveyResultResponse {
     // private String type;
 
     public SurveyResultResponse(Survey survey){
+        this.id = survey.getId();
         this.title = survey.getTitle();
         this.contents = survey.getContents();
         this.satisfaction=survey.getSatisfaction();

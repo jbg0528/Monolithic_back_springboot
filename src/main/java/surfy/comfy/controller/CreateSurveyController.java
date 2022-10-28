@@ -112,6 +112,7 @@ public class CreateSurveyController {
     public void ResponseAnswer(@RequestBody String data,@PathVariable(name="surveyId")Long surveyId){
         JSONParser parser = new JSONParser();
         JSONObject json=(JSONObject)parser.parse(data);
+        System.out.println(json);
         Survey survey=surveyRepository.findSurveysById(surveyId);
 
         CreateAnswerDB(json,survey);
@@ -276,8 +277,14 @@ public class CreateSurveyController {
     public void CreateAnswerDB(JSONObject json,Survey survey){
         JSONArray ques_list=(JSONArray) json.get("ques_list");
         List<Question> Ques_list=questionRepository.findAllBySurvey_Id(survey.getId());
-        List<Answer> survey_ans_list=answerRepository.getAnswerBySurveyId(survey.getId());
-        Long submitid=survey_ans_list.get(survey_ans_list.size()-1).getSubmit()+1;
+        Long submitid = 0L;
+        if(answerRepository.getAnswerBySurveyId(survey.getId()).size() == 0){
+            submitid=1L;
+        }else {
+            List<Answer> survey_ans_list = answerRepository.getAnswerBySurveyId(survey.getId());
+            submitid=survey_ans_list.get(survey_ans_list.size()-1).getSubmit()+1L;
+        }
+        System.out.println(submitid);
         int t=0;
         for(int i=0;i<Ques_list.size();i++){
             Question question= Ques_list.get(i);

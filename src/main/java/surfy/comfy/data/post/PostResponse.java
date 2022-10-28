@@ -16,7 +16,7 @@ public class PostResponse {
     private Long postId;
     private LocalDate uploadDate;
     private Long authorId;
-    private String thumbnail;
+    private Long thumbnail;
 
     public PostResponse(Post post){
         this.title=post.getTitle();
@@ -24,7 +24,7 @@ public class PostResponse {
         this.postId=post.getId();
         this.uploadDate=post.getUploadDate();
         this.authorId=post.getMember().getId();
-        this.thumbnail="images/"+post.getSurvey().getThumbnail()+".jpg";
+        this.thumbnail=post.getSurvey().getThumbnail();
 //        this.type="post";
     }
 

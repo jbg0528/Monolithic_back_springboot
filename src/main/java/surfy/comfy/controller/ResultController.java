@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import surfy.comfy.config.BaseResponse;
 //import surfy.comfy.data.result.QuestionAnswerResponse;
 //import surfy.comfy.data.result.QuestionResponse;
+import surfy.comfy.data.result.QuestionAnswerResponse;
 import surfy.comfy.data.result.SurveyResultResponse;
 import surfy.comfy.data.result.RespondentsResponse;
 import surfy.comfy.entity.Answer;
+import surfy.comfy.entity.Option;
 import surfy.comfy.entity.Question;
 import surfy.comfy.service.ResultService;
 
@@ -16,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
 public class ResultController {
 
     private final ResultService resultService;
@@ -37,11 +38,20 @@ public class ResultController {
 
     // 문항별 보기 - Query(질문내용, 질문 타입, 타입에 따른 답변) - 변경해야 함 나중에
     @GetMapping("/resultSurvey/question/{survey_id}")
-    public BaseResponse<List<Question>> getSurveyQuestion(@PathVariable(name="survey_id") Long surveyId){
-        List<Question> questionList = resultService.getQuestionList(surveyId);
+    public BaseResponse<List<QuestionAnswerResponse>> getSurveyQuestion(@PathVariable(name="survey_id") Long surveyId){
+        List<QuestionAnswerResponse> questionAnswerResponseList = resultService.getQuestionAnswerList(surveyId);
 
-        return new BaseResponse<>(questionList);
+        return new BaseResponse<>(questionAnswerResponseList);
     }
+
+    @GetMapping("/resultSurvey/question/option/{survey_id}/{question_id}")
+    public BaseResponse<List<Option>> getQuestionOption(@PathVariable(name="survey_id") Long surveyId, @PathVariable(name="question_id") Long questionId){
+        List<Option> optionList = resultService.getOptions(surveyId, questionId);
+
+        return new BaseResponse<>(optionList);
+    }
+
+
     // 개인 응답
 
 //    @GetMapping("/resultSurvey/individual_result/{survey_id}/{user_id}")

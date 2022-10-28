@@ -119,8 +119,8 @@ public class PostController {
     }
 
     @GetMapping("/selectSurvey/{memberId}")
-    public BaseResponse<List<MySurveyResponse>> selectSurvey(@PathVariable(name="memberId")Long memberId, SurveyType status){
-        List<MySurveyResponse> SurveyList = postService.getMySurvey(memberId,status);
+    public BaseResponse<List<SurveyResponse>> selectSurvey(@PathVariable(name="memberId")Long memberId){
+        List<SurveyResponse> SurveyList = postService.getMySurvey(memberId);
         System.out.println("List"+ SurveyList);
         return new BaseResponse<>(SurveyList);
 
@@ -135,10 +135,10 @@ public class PostController {
 
 
     @GetMapping("/createPost/{surveyId}")
-    public BaseResponse<List<SurveyResponse>> getSurvey(@PathVariable(name="surveyId")Long surveyId){
-        List<SurveyResponse> SurveyList = surveyService.getSurvey(surveyId);
-        System.out.println("List"+ SurveyList);
-        return new BaseResponse<>(SurveyList);
+    public BaseResponse<SurveyResponse> getSurvey(@PathVariable(name="surveyId")Long surveyId){
+        SurveyResponse response = surveyService.getSurvey(surveyId);
+        System.out.println("List"+ response);
+        return new BaseResponse<>(response);
 
     }
 

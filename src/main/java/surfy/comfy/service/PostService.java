@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import surfy.comfy.data.manage.SurveyResponse;
 import surfy.comfy.data.post.*;
 import surfy.comfy.entity.*;
 import surfy.comfy.exception.post.CannotDeletePost;
@@ -230,35 +231,51 @@ public class PostService {
         return search;
     }
 
-    /**
-     * 내 설문지 조회
-     * @param memberId
-     * @return
-     */
-    @Transactional
-    public List<MySurveyResponse> getMySurvey(Long memberId){
-        List<Survey> mySurveyList = surveyRepository.findAllByMember_Id(memberId);
-        List<MySurveyResponse> surveyList=mySurveyList.stream()
-                .map(p -> new MySurveyResponse(p))
-                .collect(Collectors.toList());
-        System.out.println("SurveyList: "+surveyList);
-        return surveyList;
-    }
+//    /**
+//     * 내 설문지 조회
+//     * @param memberId
+//     * @return
+//     */
+//    @Transactional
+//    public List<MySurveyResponse> getMySurvey(Long memberId){
+//        List<Survey> mySurveyList = surveyRepository.findAllByMember_Id(memberId);
+//        List<MySurveyResponse> surveyList=mySurveyList.stream()
+//                .map(p -> new MySurveyResponse(p))
+//                .collect(Collectors.toList());
+//        System.out.println("SurveyList: "+surveyList);
+//        return surveyList;
+//    }
 
     /**
      * 설문 완료된 내 설문지 조회
      * @param memberId
-     * @param status
      * @return
      */
     @Transactional
-    public List<MySurveyResponse> getMySurvey(Long memberId, SurveyType status){
+    public List<SurveyResponse> getMySurvey(Long memberId){
         List<Survey> mySurveyList = surveyRepository.findAllByMember_IdAndStatus(memberId,SurveyType.finish);
-        List<MySurveyResponse> surveyList=mySurveyList.stream()
-                .map(p -> new MySurveyResponse(p))
-                .collect(Collectors.toList());
-        System.out.println("SurveyList: "+surveyList);
-        return surveyList;
+        List<SurveyResponse> response=new ArrayList<>();
+
+        int average=0;
+
+        for(Survey s:mySurveyList){
+            List<Satisfaction> allSatisfactions=satisfactionRepository.findAllBySurvey_Id(s.getId());
+            Long total=0L;
+
+            if(allSatisfactions.size()==0){
+                average=0;
+            }
+            else{
+                for(Satisfaction sf:allSatisfactions){
+                    total+=sf.getPercent();
+                }
+                average= total.intValue()/allSatisfactions.size();
+                System.out.println("satisfaction average: "+average);
+            }
+            response.add(new SurveyResponse(s,average));
+        }
+
+        return response;
     }
 
     /**

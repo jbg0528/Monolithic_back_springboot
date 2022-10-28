@@ -24,6 +24,8 @@ public class GetPostResponse {
     private LocalDate uploadDate;
     private Long mySatisfaction;
     private int averageSatisfaction;
+    private String thumbnail;
+
 
     public GetPostResponse(Post post,Boolean isBookmarked,Boolean member_case,Long mySatisfaction,int averageSatisfaction){
         this.postId=post.getId();
@@ -39,6 +41,8 @@ public class GetPostResponse {
         this.uploadDate=post.getUploadDate();
         this.mySatisfaction=mySatisfaction;
         this.averageSatisfaction=averageSatisfaction;
+        this.thumbnail= "images/"+post.getSurvey().getThumbnail()+".jpg";
+
     }
 
     public GetPostResponse(Post post,Boolean isBookmarked,Boolean member_case){
@@ -53,6 +57,7 @@ public class GetPostResponse {
         this.isBookmarked=isBookmarked;
         this.member_case=member_case;
         this.uploadDate=post.getUploadDate();
+        this.thumbnail= "images/"+post.getSurvey().getThumbnail()+".jpg";
     }
 
 }

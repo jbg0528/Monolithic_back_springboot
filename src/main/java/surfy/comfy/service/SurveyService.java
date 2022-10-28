@@ -147,16 +147,7 @@ public class SurveyService {
         }
     }
 
-//    /**
-//     * surveyId로 설문지 정보 조회
-//     */
-//    @Transactional
-//    public SurveyResponse getSurvey(Long surveyId){
-//        Survey survey=surveyRepository.findById(surveyId).get();
-//
-//        return new SurveyResponse(survey);
-//
-//    }
+
 
     //설문지 상태 update
     @Transactional
@@ -170,24 +161,31 @@ public class SurveyService {
 
     //Survey id - 설문지 가져오기
     @Transactional
-    public List<SurveyResponse> getSurvey(Long surveyId){
+    public SurveyResponse getSurvey(Long surveyId){
 
-        List<Survey> Survey = surveyRepository.findSurveyById(surveyId);
-        List<SurveyResponse> mySurvey = Survey.stream()
+        Survey survey = surveyRepository.findById(surveyId).get();
+        SurveyResponse response =new SurveyResponse(survey);
+        return response;
+    }
+    @Transactional
+    public List<SurveyResponse> getSurveyByStatus(Long memberId,SurveyType status) {
+        logger.info("[getSurveyByStatus] - memberId: {}",memberId);
+        logger.info("[getSurveyByStatus] - status: {}",status);
+
+        List<Survey> SurveyList = surveyRepository.findAllByMember_IdAndStatus(memberId,status);
+        logger.info("SurveyList size: {}",SurveyList.size());
+        List<SurveyResponse> Surveys = SurveyList.stream()
                 .map(p -> new SurveyResponse(p))
                 .collect(Collectors.toList());
-
-        return mySurvey;
+        logger.info("[getSurveyByStatus] - result: {}",Surveys);
+        return Surveys;
     }
 
     @Transactional
-    public void patchSurveyThumbnail(ThumbnailRequest request){
-        String binaryData=request.getImgSrc();
-        Survey survey=surveyRepository.findById(request.getSurveyId()).get();
-        survey.setThumbnail(binaryData);
+    public String postSurveyThumbnail(Long surveyId,Long thumb){
+        Survey survey=surveyRepository.findById(surveyId).get();
+        survey.setThumbnail(thumb);
 
-
-
-
+        return "썸네일 저장 성공";
     }
 }

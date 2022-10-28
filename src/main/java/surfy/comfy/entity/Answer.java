@@ -50,6 +50,9 @@ public class Answer {
 
     private String filePath;
 
+    @Column(name="submit_id")
+    private Long submit;
+
     //TODO: 선형 배율 어떻게 저장?
     private Long linear_answer;
 }

@@ -5,10 +5,11 @@ import lombok.SneakyThrows;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 import surfy.comfy.config.BaseResponse;
 import surfy.comfy.data.ThumbnailRequest;
+import surfy.comfy.data.manage.SurveyResponse;
+import surfy.comfy.data.survey.GetSurveyDataResponse;
 import surfy.comfy.entity.*;
 import surfy.comfy.repository.*;
 import surfy.comfy.service.SurveyService;
@@ -17,10 +18,7 @@ import surfy.comfy.type.SurveyType;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import java.io.FileOutputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +41,8 @@ public class CreateSurveyController {
     @Transactional
     @PostMapping("/createsurvey/{memberEmail}")
     public BaseResponse<Long> CreateSurvey(@RequestBody String data, @PathVariable(name="memberEmail")String memberEmail){
+
+        System.out.println("memberEmail: "+memberEmail);
         Optional<Member> loadmember= memberRepository.findByEmail(memberEmail);
         Member member=loadmember.get();
 
@@ -78,17 +78,17 @@ public class CreateSurveyController {
      * @param request
      * @return
      */
-    @PatchMapping("/thumbnail")
-    public BaseResponse<String> postThumbnail(@RequestBody ThumbnailRequest request){
-        System.out.println("email: "+request.getEmail());
-        System.out.println("imgSrc: "+request.getImgSrc());
-        System.out.println("bgColor: "+request.getBgColor());
-        System.out.println("surveyId: "+request.getSurveyId());
-
-        surveyService.patchSurveyThumbnail(request);
-
-        return new BaseResponse<>("ggg");
-    }
+//    @PatchMapping("/thumbnail")
+//    public BaseResponse<String> postThumbnail(@RequestBody ThumbnailRequest request){
+//        System.out.println("email: "+request.getEmail());
+//        System.out.println("imgSrc: "+request.getImgSrc());
+//        System.out.println("bgColor: "+request.getBgColor());
+//        System.out.println("surveyId: "+request.getSurveyId());
+//
+//        surveyService.patchSurveyThumbnail(request);
+//
+//        return new BaseResponse<>("ggg");
+//    }
 
     /**
      * minseo
@@ -100,7 +100,6 @@ public class CreateSurveyController {
         System.out.println("email: "+request.getEmail());
         System.out.println("imgSrc: "+request.getImgSrc());
         System.out.println("bgColor: "+request.getBgColor());
-
         String binaryData=request.getImgSrc();
 
         return new BaseResponse<>("ggg");
@@ -123,13 +122,12 @@ public class CreateSurveyController {
     @SneakyThrows
     @Transactional
     @PostMapping("/createSurvey/{surveyId}/{memberEmail}")
-    public Long EditSurvey(@RequestBody String data,@PathVariable(name="surveyId")Long surveyId, @PathVariable(name="memberEmail")String memberEmail){
+    public BaseResponse<Long> EditSurvey(@RequestBody String data,@PathVariable(name="surveyId")Long surveyId, @PathVariable(name="memberEmail")String memberEmail){
         Optional<Member> loadmember= memberRepository.findByEmail(memberEmail);
         Member member=loadmember.get();
-
+        Long returnId;
         if(memberEmail.equals(surveyRepository.findSurveysById(surveyId).getMember().getEmail())){
             Survey survey=surveyRepository.findSurveysById(surveyId);
-
             JSONParser parser = new JSONParser();
             JSONObject json=(JSONObject)parser.parse(data);
 
@@ -142,7 +140,7 @@ public class CreateSurveyController {
             }
 
             EditSurveyDB(json,survey,member);
-            return survey.getId();
+            returnId=survey.getId();
         }
         else{
             Survey survey=new Survey();
@@ -166,13 +164,15 @@ public class CreateSurveyController {
             }
 
             CreateSurveyDB(json,survey,member);
-            return survey.getId();
+            returnId=survey.getId();
         }
+        return new BaseResponse<>(returnId);
     }
     @Transactional
     public void CreateSurveyDB(JSONObject json,Survey survey,Member member){
         JSONArray ques_list=(JSONArray) json.get("ques_list");
-
+        JSONArray ans_list=(JSONArray) json.get("ans_list");
+        JSONArray choice_list=(JSONArray) json.get("choice_list");
         for(int i=0;i<ques_list.size();i++){
             Question question=new Question();
 
@@ -185,9 +185,8 @@ public class CreateSurveyController {
             JSONObject type=(JSONObject) ques_item.get("type");
             int ques_type_id=(int) type.get("id");
 
-            if(ques_type_id==1){
-                JSONObject ques_type=(JSONObject) type.get("que_type");
-                int choice_type=(int) ques_type.get("choice_type");
+            if(ques_type_id==1){ //객관식
+                int choice_type=(int) type.get("choice_type");
 
                 if(choice_type==0){
                     question.setQuestionType(QuestionType.객관식_단일);
@@ -195,25 +194,25 @@ public class CreateSurveyController {
                 else{
                     question.setQuestionType(QuestionType.객관식_중복);
                 }
-                JSONArray ans_list=(JSONArray) ques_type.get("ans_list");
 
-                for(int k=0;k<ans_list.size();k++){
-                    Option option=new Option();
-
+                for(int k=0;k<ans_list.size();k++){ //해당 Question의 ans_list 불러오기
                     JSONObject ans_item=(JSONObject) ans_list.get(k);
-                    String text=String.valueOf(ans_item.get("text"));
                     int ans_id=(int) ans_item.get("id");
+                    int root_id=(int) ans_item.get("rootid");
 
-                    option.setQuestion(question);
-                    option.setContents(text);
-                    option.setSurvey(survey);
-                    em.persist(option);
+                    if(root_id==ques_id){
+                        Option option=new Option();
+                        String text=String.valueOf(ans_item.get("value"));
+
+                        option.setQuestion(question);
+                        option.setContents(text);
+                        option.setSurvey(survey);
+                        em.persist(option);
+                    }
                 }
-
             }
-            else if(ques_type_id==2){
-                JSONObject ques_type=(JSONObject) type.get("que_type");
-                int choice_type=(int) ques_type.get("choice_type");
+            else if(ques_type_id==2){ //객관식 Grid
+                int choice_type=(int) type.get("choice_type");
 
                 if(choice_type==0){
                     question.setQuestionType(QuestionType.객관식_그리드_단일);
@@ -221,38 +220,41 @@ public class CreateSurveyController {
                 else{
                     question.setQuestionType(QuestionType.객관식_그리드_중복);
                 }
-                JSONArray ans_list=(JSONArray) ques_type.get("ans_list");
-
-                for(int k=0;k<ans_list.size();k++){
-                    Option option=new Option();
-
+                for(int k=0;k<ans_list.size();k++){ //해당 Question의 ans_list 불러오기
                     JSONObject ans_item=(JSONObject) ans_list.get(k);
-                    String text=String.valueOf(ans_item.get("text"));
                     int ans_id=(int) ans_item.get("id");
+                    int root_id=(int) ans_item.get("rootid");
 
-                    option.setQuestion(question);
-                    option.setContents(text);
-                    option.setSurvey(survey);
-                    em.persist(option);
+                    if(root_id==ques_id){
+                        Option option=new Option();
+                        String text=String.valueOf(ans_item.get("value"));
+
+                        option.setQuestion(question);
+                        option.setContents(text);
+                        option.setSurvey(survey);
+                        em.persist(option);
+                    }
                 }
 
-                JSONArray choice_list=(JSONArray) ques_type.get("choice_list");
-                for(int k=0;k<choice_list.size();k++){
-                    Grid grid=new Grid();
-
+                for(int k=0;k<choice_list.size();k++){ //해당 Question의 choice_list 불러오기
                     JSONObject choice_item=(JSONObject) choice_list.get(k);
-                    String text=String.valueOf(choice_item.get("text"));
-                    int choice_id=(int) choice_item.get("id");
+                    int cho_id=(int) choice_item.get("id");
+                    int root_id=(int) choice_item.get("rootid");
 
-                    grid.setQuestion(question);
-                    grid.setContents(text);
-                    grid.setSurvey(survey);
-                    em.persist(grid);
+                    if(root_id==ques_id){
+                        Grid grid=new Grid();
+                        String text=String.valueOf(choice_item.get("value"));
+
+                        grid.setQuestion(question);
+                        grid.setContents(text);
+                        grid.setSurvey(survey);
+                        em.persist(grid);
+                    }
                 }
             }
-            else if(ques_type_id==3){
+            else if(ques_type_id==3){ //주관식 option이 하나기 때문에 ans_list를 탐색할 이유가 없다
                 Essay essay=new Essay();
-                essay.setContents(ques);
+                essay.setQuestion(question);
                 essay.setMember(member);
                 em.persist(essay);
 
@@ -273,9 +275,9 @@ public class CreateSurveyController {
 
     public void CreateAnswerDB(JSONObject json,Survey survey){
         JSONArray ques_list=(JSONArray) json.get("ques_list");
-
         List<Question> Ques_list=questionRepository.findAllBySurvey_Id(survey.getId());
-
+        List<Answer> survey_ans_list=answerRepository.getAnswerBySurveyId(survey.getId());
+        Long submitid=survey_ans_list.get(survey_ans_list.size()-1).getSubmit()+1;
         int t=0;
         for(int i=0;i<Ques_list.size();i++){
             Question question= Ques_list.get(i);
@@ -284,6 +286,7 @@ public class CreateSurveyController {
                 Answer answer=new Answer();
                 answer.setSurvey(survey);
                 answer.setQuestion(question);
+                answer.setSubmit(submitid);
 
                 Long satis = Long.parseLong((String) json.get("satis"));
                 Satisfaction satisfaction=new Satisfaction();
@@ -302,63 +305,49 @@ public class CreateSurveyController {
 
             JSONObject ques_item=(JSONObject) ques_list.get(t);
             t++;
-            String ques=String.valueOf(ques_item.get("ques"));
-            int ques_id=(int) ques_item.get("id");
+            int ques_id=question.getId().intValue();
 
             JSONObject type=(JSONObject) ques_item.get("type");
             int ques_type_id=(int) type.get("id");
 
-            if(ques_type_id==1){
-                JSONObject ques_type=(JSONObject) type.get("que_type");
-                JSONArray ans_list=(JSONArray) ques_type.get("ans_list");
-                int choice_value=(int)((JSONObject)ans_list.get(0)).get("choice_value");
+            if(ques_type_id==1 || ques_type_id==2){ //객관식 답변
+                JSONArray ans_list=(JSONArray) type.get("choice_value");
                 for(int k=0;k<ans_list.size();k++){
                     JSONObject ans_item=(JSONObject) ans_list.get(k);
-                    int ans_id=(int) ans_item.get("id");
+                    int select_id=(int) ans_item.get("selectid");
 
-                    if(choice_value==ans_id+1){
-                        Answer answer=new Answer();
-                        answer.setSurvey(survey);
-                        answer.setQuestion(question);
+                    Answer answer=new Answer();
+                    answer.setSurvey(survey);
+                    answer.setQuestion(question);
+                    answer.setSubmit(submitid);
 
-                        answer.setOption(optionList.get(k));
-                        em.persist(answer);
-                        break;
+                    if(ques_type_id==2){ //객관식 Grid 답변
+                        int ans_id=(int) ans_item.get("rootid");
+                        Option select_opt=optionList.stream().filter(s->s.getId()==ans_id).findFirst().get();
+                        Grid select_grid=gridList.stream().filter(s->s.getId()==select_id).findFirst().get();
+                        answer.setGrid(select_grid);
+                        answer.setOption(select_opt);
                     }
+                    else{
+                        Option select_opt=optionList.stream().filter(s->s.getId()==select_id).findFirst().get();
+                        answer.setOption(select_opt);
+                    }
+
+                    em.persist(answer);
                 }
             }
-            else if(ques_type_id==2){
-                JSONObject ques_type=(JSONObject) type.get("que_type");
-                JSONArray ans_list=(JSONArray) ques_type.get("ans_list");
-                JSONArray choice_list=(JSONArray) ques_type.get("choice_list");
-                for(int k=0;k<ans_list.size();k++){
-                    int choice_value=(int)((JSONObject)ans_list.get(k)).get("choice_value");
-                    JSONObject ans_item=(JSONObject) ans_list.get(k);
-                    int ans_id=(int) ans_item.get("id");
+            else if(ques_type_id==3){ //주관식
+                String writing=(String) type.get("answer");
 
-                    for(int r=0;r<choice_list.size();r++){
-                        JSONObject choice_item=(JSONObject) choice_list.get(r);
-                        int choice_id=(int) choice_item.get("id");
-
-                        if(choice_value==choice_id+1){
-                            Answer answer=new Answer();
-                            answer.setSurvey(survey);
-                            answer.setQuestion(question);
-
-                            answer.setOption(optionList.get(r));
-                            answer.setGrid(gridList.get(k));
-                            em.persist(answer);
-                            break;
-                        }
-                    }
-                }
-            }
-            else if(ques_type_id==3){
                 Answer answer=new Answer();
                 answer.setSurvey(survey);
                 answer.setQuestion(question);
+                answer.setSubmit(submitid);
 
-                answer.setEssay(essayList.get(0));
+                Essay essay=essayList.get(0);
+                essay.setContents(writing);
+                essayList.set(0,essay);
+                answer.setEssay(essay);
                 em.persist(answer);
             }
         }

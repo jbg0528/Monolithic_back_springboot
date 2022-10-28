@@ -30,6 +30,7 @@ public class ResultService {
 
     private final GridRepository gridRepository;
 
+    private final OptionRepository optionRepository;
 
     public Survey getSurveyById(Long surveyId){
         Survey survey = resultRepository.findById(surveyId)
@@ -38,9 +39,59 @@ public class ResultService {
         return survey;
     }
 
-    public List<Question> getQuestionList(Long surveyId){
-        List<Question> questionsList = questionRepository.findAllBySurvey_id(surveyId);
-        return questionsList;
+    //질문 내용과 해당하는 답변 가져오기
+    public List<QuestionAnswerResponse> getQuestionAnswerList(Long surveyId){
+        List<Question> questionList = questionRepository.findAllBySurvey_id(surveyId);
+        List<QuestionResponse> questionResponseList = questionList.stream()
+                .map(p -> new QuestionResponse(p))
+                .collect(Collectors.toList());
+        List<Answer> answerList = answerRespository.getAnswerBySurveyId(surveyId);
+
+        List<QuestionAnswerResponse> questionAnswerResponseList = new ArrayList<>();
+
+        int grid_count = 0;
+        for(int i=0; i<questionList.size(); i++) {
+            if (Objects.equals(questionList.get(i).getQuestionType(), QuestionType.객관식_그리드_단일)) {
+                List<Grid> gridList = gridRepository.findAllByQuestion_Id(questionList.get(i).getId());
+                grid_count = grid_count + gridList.size() -1;
+            }
+        }
+        int user_count = answerList.size() / (questionList.size() + grid_count) ;
+
+        int grid_question = 0;
+        for(int i=0; i<questionList.size(); i++){
+            QuestionAnswerResponse questionAnswerResponse = new QuestionAnswerResponse();
+            questionAnswerResponse.setQuestion(questionResponseList.get(i));
+            List<Answer> answers = new ArrayList<>();
+
+            for(int j=0; j<user_count; j++){
+                if(Objects.equals(questionList.get(i).getQuestionType(), QuestionType.객관식_그리드_단일)){
+                    if(j==0){grid_question++;}
+                    for(int k=0; k<grid_count+1; k++){
+                        answers.add(answerList.get(i + (j * (questionList.size()+grid_count)) + k));
+                    }
+                }else{
+                    answers.add(answerList.get(i + ((grid_count) * grid_question) + (j * (questionList.size()+grid_count))));
+                }
+            }
+            questionAnswerResponse.setAnswer(answers);
+            questionAnswerResponseList.add(questionAnswerResponse);
+        }
+
+
+        return questionAnswerResponseList;
+    }
+
+    // 문항별 보기에서 객관식 질문이 있으면 옵션 가져오기
+    public List<Option> getOptions(Long surveyId, Long questionId){
+        List<Option> optionList = optionRepository.findAllBySurvey_Question_Id(surveyId, questionId);
+//        List<Option> rorOptionList = new ArrayList<>();
+//        for(int i=0; i<optionList.size(); i++){
+//            if(Objects.equals(optionList.get(i).getQuestion().getQuestionType(), QuestionType.객관식_단일)){
+//                rorOptionList.add(optionList.get(i));
+//            }
+//        }
+        return optionList;
     }
 
     // 응답자 수 가져오기 -> 만족도 테이블로 구현 완료
@@ -63,11 +114,11 @@ public class ResultService {
         for(int i=0; i<questionSize; i++) {
             if (Objects.equals(questionList.get(i).getQuestionType(), QuestionType.객관식_그리드_단일)) {
                 List<Grid> gridList = gridRepository.findAllByQuestion_Id(questionList.get(i).getId());
-                count = count + gridList.size();
+                count = count + gridList.size() -1;
             }
         }
-        int result = (int) (individualId * (questionSize + count -1));
-        int start = (int) ((individualId-1)*(questionSize + count -1)) ;
+        int result = (int) (individualId * (questionSize + count));
+        int start = (int) ((individualId-1)*(questionSize + count)) ;
 
         List<Answer> selectedAnswers = new ArrayList<>();
         for(int i = start; i< result; i++){

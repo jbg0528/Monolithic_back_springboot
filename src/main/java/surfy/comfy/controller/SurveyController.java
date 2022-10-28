@@ -12,6 +12,7 @@ import surfy.comfy.data.survey.GetSurveyResponse;
 import surfy.comfy.data.survey.PostSurveyResponse;
 import surfy.comfy.entity.Survey;
 import surfy.comfy.service.SurveyService;
+import surfy.comfy.type.SurveyType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,27 @@ public class SurveyController {
 //        return new BaseResponse<>(response);
 //    }
 
+    //    설문지 상태에 따라서 가져오기
+    // 임시저장 설문지 가져오기
+    @GetMapping("/surveyPage/notFinish/{memberId}")
+    public BaseResponse<List<SurveyResponse>> getSurveyByStatusNotFinish(@PathVariable(name="memberId")Long memberId){
+        List<SurveyResponse> surveyList = surveyService.getSurveyByStatus(memberId,SurveyType.notFinish);
+        return new BaseResponse<>(surveyList);
+    }
 
+    // 설문 완료 된 설문지 가져오기
+    @GetMapping("/surveyPage/finish/{memberId}")
+    public BaseResponse<List<SurveyResponse>> getSurveyByStatusFinish(@PathVariable(name="memberId")Long memberId){
+        List<SurveyResponse> surveyList = surveyService.getSurveyByStatus(memberId,SurveyType.finish);
+        return new BaseResponse<>(surveyList);
+    }
+
+    // 설문 중인 설문지 가져오기
+    @GetMapping("/surveyPage/surveying/{memberId}")
+    public BaseResponse<List<SurveyResponse>> getSurveyByStatusSurveying(@PathVariable(name="memberId")Long memberId){
+        List<SurveyResponse> surveyList = surveyService.getSurveyByStatus(memberId,SurveyType.surveying);
+        return new BaseResponse<>(surveyList);
+    }
 
     /**
      * 정규
@@ -89,4 +110,15 @@ public class SurveyController {
         return new BaseResponse<>(response);
     }
 
- }
+    /**
+     * 민서
+     * 설문지 썸네일 저장
+     */
+    @PatchMapping("/survey/thumbnail/{surveyId}/{thumb}")
+    public BaseResponse<String> postSurveyThumbnail(@PathVariable(name="surveyId")Long surveyId,@PathVariable(name="thumb")Long thumb){
+        String response=surveyService.postSurveyThumbnail(surveyId,thumb);
+
+        return new BaseResponse<>(response);
+    }
+
+}

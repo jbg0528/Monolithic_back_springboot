@@ -102,7 +102,7 @@ public class SurveyController {
      * @param surveyId
      * @return
      */
-    @PatchMapping("/survey/{surveyId}")
+    @PatchMapping("/survey-status/{surveyId}")
     public BaseResponse<FinishSurveyResponse> finishSurvey(@PathVariable(name = "surveyId") Long surveyId){
 
         FinishSurveyResponse response = surveyService.finishSurvey(surveyId);

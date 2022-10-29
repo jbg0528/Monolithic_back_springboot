@@ -31,13 +31,14 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
     // preHandle -> 컨트롤러의 메서드에 매핑된 특정 URI가 호출됐을 때 실행되는 메서드, 컨트롤러를 접근하기 직전에 실행되는 메서드.
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+        logger.info("==============================================");
         logger.info("preHandle method: {}",request.getMethod());
-        logger.info("request: {}",request.getHeader("REFRESH_TOKEN"));
         logger.info("JwtToken 호출");
         String accessToken = request.getHeader("ACCESS_TOKEN");
         logger.info("AccessToken: {}",accessToken);
         String refreshToken = request.getHeader("REFRESH_TOKEN");
         logger.info("RefreshToken: {}",refreshToken);
+        logger.info("Request URL: {}",request.getRequestURL());
 
         if (HttpMethod.OPTIONS.matches(request.getMethod())) {
             return true;
@@ -55,9 +56,9 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
         else if(!jwtTokenProvider.isValidAccessToken(accessToken)&&jwtTokenProvider.isValidRefreshToken(refreshToken)){
             logger.info(">JwtTokenInterceptor - invalid AccessToken && valid RefreshToken");
             TokenResponse tokenResponse=oAuthService.issueAccessToken(request);
-            response.setHeader("ACCESS_TOKEN",tokenResponse.getACCESS_TOKEN());
-            response.setHeader("REFRESH_TOKEN",tokenResponse.getREFRESH_TOKEN());
-            response.setHeader("msg", "Reissue access token.");
+            response.addHeader("ACCESS_TOKEN",tokenResponse.getACCESS_TOKEN());
+            response.addHeader("REFRESH_TOKEN",tokenResponse.getREFRESH_TOKEN());
+            response.addHeader("msg", "Reissue access token.");
             return true;
         }
         // refresh token도 유효하지 않은 경우

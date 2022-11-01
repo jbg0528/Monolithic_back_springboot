@@ -17,9 +17,6 @@ public class Essay {
 
     private String contents;
 
-    @OneToOne
-    @JoinColumn(name="member_id")
-    private Member member;
 
     @ManyToOne
     @JsonBackReference

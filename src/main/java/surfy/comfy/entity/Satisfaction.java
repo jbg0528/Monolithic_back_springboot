@@ -16,11 +16,6 @@ public class Satisfaction {
 
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name="member_id")
-    private Member member;
-
-    @ManyToOne
-    @JsonBackReference
     @JoinColumn(name="survey_id")
     private Survey survey;
 

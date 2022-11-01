@@ -40,7 +40,7 @@ public class WebConfig implements WebMvcConfigurer {
 //                .allowedOrigins("*");
 
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("http://www.commfy.shop:3000")
 //                .allowedOrigins("http://www.commfy.shop:3000")
                 .exposedHeaders("ACCESS_TOKEN")
                 .exposedHeaders("REFRESH_TOKEN") // 서버에서 반환할 헤더

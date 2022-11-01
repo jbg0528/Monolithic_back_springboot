@@ -52,8 +52,8 @@ public class ResultService {
         int grid_count = 0;
         for(int i=0; i<questionList.size(); i++) {
             if (Objects.equals(questionList.get(i).getQuestionType(), QuestionType.객관식_그리드_단일)) {
-                List<Grid> gridList = gridRepository.findAllByQuestion_Id(questionList.get(i).getId());
-                grid_count = grid_count + gridList.size() -1;
+                List<Option> optionList = optionRepository.findAllByQuestion_Id(questionList.get(i).getId());
+                grid_count = grid_count + optionList.size() -1;
             }
         }
         int user_count = answerList.size() / (questionList.size() + grid_count) ;

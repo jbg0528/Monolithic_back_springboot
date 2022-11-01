@@ -256,7 +256,7 @@ public class CreateSurveyController {
             else if(ques_type_id==3){ //주관식 option이 하나기 때문에 ans_list를 탐색할 이유가 없다
                 Essay essay=new Essay();
                 essay.setQuestion(question);
-                essay.setMember(member);
+//                essay.setMember(member);
                 em.persist(essay);
 
                 question.setQuestionType(QuestionType.주관식);

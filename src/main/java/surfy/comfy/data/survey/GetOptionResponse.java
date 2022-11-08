@@ -1,3 +1,5 @@
+
+
 package surfy.comfy.data.survey;
 
 import lombok.Data;
@@ -9,6 +11,7 @@ public class GetOptionResponse {
     private Long rootid;
     private Long id;
     private String value;
+    public GetOptionResponse(){}
     public GetOptionResponse(Option option){
         this.temid=0L;
         this.rootid=option.getQuestion().getId();

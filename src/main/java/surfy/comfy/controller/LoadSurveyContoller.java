@@ -23,55 +23,26 @@ public class LoadSurveyContoller {
     private final LoadSurveyService loadSurveyService;
     private final Logger logger= LoggerFactory.getLogger(LoadSurveyContoller.class);
     @SneakyThrows
-    @GetMapping("/createSurvey/{surveyId}")
-    public BaseResponse<JSONObject> SendEditSurveyData(@PathVariable(name="surveyId")Long surveyId){
-        String result= loadSurveyService.getSurveydata(surveyId,false,null);
+    @GetMapping("/survey/{surveyId}")
+    public BaseResponse<Object> SendEditSurveyData(@PathVariable(name="surveyId")Long surveyId){
+        Object result= loadSurveyService.getSurveydata(surveyId,false,null);
         logger.info("editSurvey - surveyId: {}",surveyId);
-        JSONParser jsonparser=new JSONParser();
-        JSONObject jsonObject=(JSONObject) jsonparser.parse(result);
-
-        System.out.println(result);
-
-        return new BaseResponse<>(jsonObject);
+        return new BaseResponse<>(result);
     }
 
     @SneakyThrows
-    @GetMapping("/respondentSurvey/{surveyId}")
-    public BaseResponse<JSONObject> SendRespondentSurveyData(@PathVariable(name="surveyId")Long surveyId){
-        String result= loadSurveyService.getSurveydata(surveyId,false,null);
-
-        JSONParser jsonparser=new JSONParser();
-        JSONObject jsonObject=(JSONObject) jsonparser.parse(result);
-
-        System.out.println(result);
-
-        return new BaseResponse<>(jsonObject);
+    @GetMapping("/respondent/{surveyId}")
+    public BaseResponse<Object> SendRespondentSurveyData(@PathVariable(name="surveyId")Long surveyId){
+        Object result= loadSurveyService.getSurveydata(surveyId,false,null);
+        logger.info("respondentSurvey - surveyId: {}",surveyId);
+        return new BaseResponse<>(result);
     }
 
     @SneakyThrows
-    @GetMapping("/answerSurvey/{surveyId}/{submitId}")
-    public BaseResponse<JSONObject> SendSurveyAnswerData(@PathVariable(name="surveyId")Long surveyId,@PathVariable(name="submitId")Long submitId){
-        String result= loadSurveyService.getSurveydata(surveyId,true,submitId);
-
-        JSONParser jsonparser=new JSONParser();
-        JSONObject jsonObject=(JSONObject) jsonparser.parse(result);
-
-        System.out.println(result);
-
-        return new BaseResponse<>(jsonObject);
+    @GetMapping("/respondent/answer/{surveyId}/{submitId}")
+    public BaseResponse<Object> SendSurveyAnswerData(@PathVariable(name="surveyId")Long surveyId,@PathVariable(name="submitId")Long submitId){
+        Object result= loadSurveyService.getSurveydata(surveyId,true,submitId);
+        logger.info("respondentSurveyAnswer - surveyId: {}, submitId: {}",surveyId,submitId);
+        return new BaseResponse<>(result);
     }
-
-    @SneakyThrows
-    @GetMapping("/answerSurvey/{surveyId}")
-    public BaseResponse<JSONObject> SendSurveyAnswerData(@PathVariable(name="surveyId")Long surveyId){
-        String result= loadSurveyService.getsubmitlist(surveyId);
-
-        JSONParser jsonparser=new JSONParser();
-        JSONObject jsonObject=(JSONObject) jsonparser.parse(result);
-
-        System.out.println(result);
-
-        return new BaseResponse<>(jsonObject);
-    }
-
 }

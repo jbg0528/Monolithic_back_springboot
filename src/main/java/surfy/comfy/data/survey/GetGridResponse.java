@@ -8,7 +8,7 @@ public class GetGridResponse {
     private Long rootid;
     private Long id;
     private String value;
-
+    public GetGridResponse(){}
     public GetGridResponse(Grid grid) {
         this.temid = 0L;
         this.rootid = grid.getQuestion().getId();

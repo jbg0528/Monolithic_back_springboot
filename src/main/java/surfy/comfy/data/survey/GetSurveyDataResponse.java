@@ -17,27 +17,30 @@ import java.util.List;
 public class GetSurveyDataResponse {
     private String intro0;
     private String intro1;
-    private JSONArray ques_list;
-    private JSONArray ans_list;
-    private JSONArray choice_list;
+    private List<GetQuestionResponse> ques_list;
+    private List<GetOptionResponse> ans_list;
+    private List<GetGridResponse> choice_list;
     private Long satis;
+    private String status;
+    private String start;
+    private String end;
+    public GetSurveyDataResponse(){}
     @SneakyThrows
     public GetSurveyDataResponse(Survey survey,Boolean loadAnswer,Long submitid){
-        ObjectMapper mapper=new ObjectMapper();
-        JSONParser parser=new JSONParser();
+        this.status = String.valueOf(survey.getStatus());
+        this.start = String.valueOf(survey.getStart());
+        this.end = String.valueOf(survey.getEnd());
+
         this.intro0=survey.getTitle();
         this.intro1=survey.getContents();
-        this.ques_list=new JSONArray();
-        this.ans_list=new JSONArray();
-        this.choice_list=new JSONArray();
+        this.ques_list=new ArrayList<>();
+        this.ans_list=new ArrayList<>();
+        this.choice_list=new ArrayList<>();
 
-        List<JSONObject> ans_temp=new ArrayList<>();
-        List<JSONObject> cho_temp=new ArrayList<>();
         for(int i=0;i<survey.getQuestions().size();i++){
             if(survey.getQuestions().get(i).getQuestionType()== QuestionType.만족도){
                 try{
                     if(loadAnswer){
-
                         for(int k=0;k<survey.getQuestions().get(i).getAnswers().size();k++){
                             System.out.println(survey.getQuestions().get(i).getAnswers().get(k).getSubmit());
                             if(survey.getQuestions().get(i).getAnswers().get(k).getSubmit()==submitid) {
@@ -53,45 +56,37 @@ public class GetSurveyDataResponse {
                 }
                 continue;
             }
-            String str_ques_list=mapper.writeValueAsString(new GetQuestionResponse(survey.getQuestions().get(i),loadAnswer,submitid));
-            JSONObject json_ques_list=(JSONObject) parser.parse(str_ques_list);
-            this.ques_list.add(json_ques_list);
+            this.ques_list.add(new GetQuestionResponse(survey.getQuestions().get(i),loadAnswer,submitid));
 
             for(int k=0;k<survey.getQuestions().get(i).getOptions().size();k++){
-                String str_opt_list=mapper.writeValueAsString(new GetOptionResponse(survey.getQuestions().get(i).getOptions().get(k)));
-                JSONObject json_opt_list=(JSONObject) parser.parse(str_opt_list);
+                GetOptionResponse opt = new GetOptionResponse(survey.getQuestions().get(i).getOptions().get(k));
 
                 int t=0;
-                for(;t<ans_temp.size();t++){
-                    if((int)ans_temp.get(t).get("id")>(int)json_opt_list.get("id")){
-                        ans_temp.add(t,json_opt_list);
-                        this.ans_list.add(t,json_opt_list);
+                for(;t<this.ans_list.size();t++){
+                    if(this.ans_list.get(t).getId()>opt.getId()){
+                        this.ans_list.add(t,opt);
                         break;
                     }
                 }
-                if(t==ans_temp.size()){
-                    ans_temp.add(json_opt_list);
-                    this.ans_list.add(json_opt_list);
+                if(t==this.ans_list.size()){
+                    this.ans_list.add(opt);
                 }
             }
             for(int k=0;k<survey.getQuestions().get(i).getGrids().size();k++){
-                String str_grid_list=mapper.writeValueAsString(new GetGridResponse(survey.getQuestions().get(i).getGrids().get(k)));
-                JSONObject json_grid_list=(JSONObject) parser.parse(str_grid_list);
+                GetGridResponse grid = new GetGridResponse(survey.getQuestions().get(i).getGrids().get(k));
+
 
                 int t=0;
-                for(;t<cho_temp.size();t++){
-                    if((int)cho_temp.get(t).get("id")>(int)json_grid_list.get("id")){
-                        cho_temp.add(t,json_grid_list);
-                        this.choice_list.add(t,json_grid_list);
+                for(;t<this.choice_list.size();t++){
+                    if(this.choice_list.get(t).getId()>grid.getId()){
+                        this.choice_list.add(t,grid);
                         break;
                     }
                 }
-                if(t==cho_temp.size()){
-                    cho_temp.add(json_grid_list);
-                    this.choice_list.add(json_grid_list);
+                if(t==this.choice_list.size()){
+                    this.choice_list.add(grid);
                 }
             }
         }
-
     }
 }

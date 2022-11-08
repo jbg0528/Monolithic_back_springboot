@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public class OAuthService {
         //logger.info("sendRedirect");
     }
 
-    public TokenResponse oAuthLogin(SocialLoginType socialLoginType, String accessToken) throws IOException {
+    public TokenResponse oAuthLogin(SocialLoginType socialLoginType, String accessToken) throws IOException, NoSuchAlgorithmException {
         switch (socialLoginType) {
             case GOOGLE: {
                 //구글로 일회성 코드를 보내 액세스 토큰이 담긴 응답객체를 받아옴
@@ -81,9 +82,13 @@ public class OAuthService {
                 Token token=new Token();
                 token.setMember(member);
                 token.setRefreshToken(jwtRefreshToken);
+                Long idx=tokenRepository.save(token).getId();
+                token=tokenRepository.findById(idx).get();
+                String refreshId=jwtTokenProvider.tokenIndexEncrypt(String.valueOf(token));
+                token.setRefreshTokenIdxEncrypted(refreshId);
                 tokenRepository.save(token);
                 //logger.info("[로그인] - refresh token 재발급");
-                TokenResponse tokenResponse=new TokenResponse(jwtAccessToken,jwtRefreshToken,member.getId(),member.getName(),member.getEmail());
+                TokenResponse tokenResponse=new TokenResponse(jwtAccessToken,refreshId,member.getId(),member.getName(),member.getEmail());
 
                 return tokenResponse;
             }
@@ -151,14 +156,15 @@ public class OAuthService {
             logger.info("Expired Access Token");
             if(jwtTokenProvider.isValidRefreshToken(refreshToken)){     //들어온 Refresh 토큰이 유효한지
                 logger.info("Valid Refresh Token");
-                Claims claimsToken = jwtTokenProvider.getClaimsToken(refreshToken);
+                String token=tokenRepository.findByRefreshTokenIdxEncrypted(refreshToken).get().getRefreshToken();
+                Claims claimsToken = jwtTokenProvider.getClaimsToken(token);
                 String email = (String)claimsToken.get("email");
                 Optional<Member> member = memberRepository.findByEmail(email);
                 String tokenFromDB = tokenRepository.findByMember_Id(member.get().getId()).get().getRefreshToken();
                 logger.info("refresh token from DB: {}",tokenFromDB);
-                if(refreshToken.equals(tokenFromDB)) {   //DB의 refresh토큰과 지금들어온 토큰이 같은지 확인
-                    logger.info("reissue access token");
+                if(token.equals(tokenFromDB)) {   //DB의 refresh토큰과 지금들어온 토큰이 같은지 확인
                     accessToken = jwtTokenProvider.createAccessToken(email);
+                    logger.info("reissued access token: {}",accessToken);
 
                 }
                 else{
@@ -173,6 +179,9 @@ public class OAuthService {
                 throw new RefreshTokenNotFound();
             }
         }
+        logger.info("[issueAccessToken]");
+        logger.info("[accessToken] :{}",accessToken);
+        logger.info("[refreshToken]: {}",refreshToken);
         return TokenResponse.builder()
                 .ACCESS_TOKEN(accessToken)
                 .REFRESH_TOKEN(refreshToken)

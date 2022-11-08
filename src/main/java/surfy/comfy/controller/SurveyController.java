@@ -40,7 +40,7 @@ public class SurveyController {
     }
 
 
-    @GetMapping("/surveyPage/{memberId}")
+    @GetMapping("/surveys/{memberId}")
     public BaseResponse<List<SurveyResponse>> getSurvey(@PathVariable(name = "memberId") Long memberId){
         logger.info("[Survey Controller] - getSurvey : {}",memberId);
         List<SurveyResponse> surveyList = surveyService.getMysurvey(memberId);
@@ -51,14 +51,14 @@ public class SurveyController {
         return new BaseResponse<>(result);
     }
 
-    @GetMapping("/surveyPage")
+    @GetMapping("/surveys")
     public BaseResponse<List<SurveyResponse>> getAllSurvey() {
         List<SurveyResponse> surveyList = surveyService.getAllSurveys();
         return new BaseResponse<>(surveyList);
     }
 
     //설문지 삭제 api
-    @DeleteMapping("/deleteSurvey/{surveyId}/{memberId}")
+    @DeleteMapping("/survey/{surveyId}/{memberId}")
     public BaseResponse<DeleteSurveyResponse> deleteSurvey (@PathVariable(name = "surveyId") Long surveyId, @PathVariable(name = "memberId") String memberId){
         DeleteSurveyResponse response = surveyService.deleteSurvey(surveyId, memberId);
 
@@ -76,21 +76,21 @@ public class SurveyController {
 
     //    설문지 상태에 따라서 가져오기
     // 임시저장 설문지 가져오기
-    @GetMapping("/surveyPage/notFinish/{memberId}")
+    @GetMapping("/surveys/notFinish/{memberId}")
     public BaseResponse<List<SurveyResponse>> getSurveyByStatusNotFinish(@PathVariable(name="memberId")Long memberId){
         List<SurveyResponse> surveyList = surveyService.getSurveyByStatus(memberId,SurveyType.notFinish);
         return new BaseResponse<>(surveyList);
     }
 
     // 설문 완료 된 설문지 가져오기
-    @GetMapping("/surveyPage/finish/{memberId}")
+    @GetMapping("/surveys/finish/{memberId}")
     public BaseResponse<List<SurveyResponse>> getSurveyByStatusFinish(@PathVariable(name="memberId")Long memberId){
         List<SurveyResponse> surveyList = surveyService.getSurveyByStatus(memberId,SurveyType.finish);
         return new BaseResponse<>(surveyList);
     }
 
     // 설문 중인 설문지 가져오기
-    @GetMapping("/surveyPage/surveying/{memberId}")
+    @GetMapping("/surveys/surveying/{memberId}")
     public BaseResponse<List<SurveyResponse>> getSurveyByStatusSurveying(@PathVariable(name="memberId")Long memberId){
         List<SurveyResponse> surveyList = surveyService.getSurveyByStatus(memberId,SurveyType.surveying);
         return new BaseResponse<>(surveyList);
@@ -102,7 +102,7 @@ public class SurveyController {
      * @param surveyId
      * @return
      */
-    @PatchMapping("/survey-status/{surveyId}")
+    @PatchMapping("/survey/{surveyId}")
     public BaseResponse<FinishSurveyResponse> finishSurvey(@PathVariable(name = "surveyId") Long surveyId){
 
         FinishSurveyResponse response = surveyService.finishSurvey(surveyId);

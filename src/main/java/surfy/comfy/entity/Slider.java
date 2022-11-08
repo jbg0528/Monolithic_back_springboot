@@ -8,24 +8,22 @@ import javax.persistence.*;
 
 @Entity
 @Getter @Setter
-@Table(name="essay")
-public class Essay {
+@Table(name="slider_option")
+public class Slider {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="essay_id")
+    @Column(name="slider_id")
     private Long id;
 
-    private String contents;
-
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name="survey_id")
-    private Survey survey;
+    private Long value;
 
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name="question_id")
     private Question question;
 
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name="survey_id")
+    private Survey survey;
 }
-

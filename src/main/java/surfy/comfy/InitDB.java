@@ -125,16 +125,16 @@
 ////            em.persist(linear);
 //
 //            // set essay answer
-//            Essay essay1=createEssay(member3,survey1, question3,"주관식 응답1입니다.");
+//            Essay essay1=createEssay(member3,survey1, question3,1L,"주관식 응답1입니다.");
 //            em.persist(essay1);
 //
-//            Essay essay2=createEssay(member4,survey1, question3,"주관식 응답2입니다.");
+//            Essay essay2=createEssay(member4,survey1, question3,2L,"주관식 응답2입니다.");
 //            em.persist(essay2);
 //
-//            Essay essay3=createEssay(member3,survey2, question6,"주관식 응답1입니다.");
+//            Essay essay3=createEssay(member3,survey2, question6,1L,"주관식 응답1입니다.");
 //            em.persist(essay3);
 //
-//            Essay essay4=createEssay(member4,survey2, question6,"주관식 응답2입니다.");
+//            Essay essay4=createEssay(member4,survey2, question6,2L,"주관식 응답2입니다.");
 //            em.persist(essay4);
 //
 //
@@ -271,15 +271,14 @@
 //            return grid;
 //        }
 //
-//        private Linear createLinear(Question question,Survey survey,Long size,String start,String end){
-//            Linear linear=new Linear();
-//            linear.setQuestion(question);
-//            linear.setSurvey(survey);
-//            linear.setSize(size);
-//            linear.setStart(start);
-//            linear.setEnd(end);
+//        private Slider createSlider(Question question,Survey survey,Long submit,Long value){
+//            Slider slider=new Slider();
+//            slider.setQuestion(question);
+//            slider.setSurvey(survey);
+//            essay.setSubmit(submit);
+//            slider.setValue(value);
 //
-//            return linear;
+//            return slider;
 //        }
 //
 //        private Satisfaction createSatisfaction(Member member, Survey survey, Question question, Long percent){
@@ -292,7 +291,7 @@
 //            return satisfaction;
 //        }
 //
-//        private Answer createAnswer(Member member,Option option,QuestionType type,Grid grid,Survey survey,Question question,Essay essay, Long linear, Satisfaction satisfaction, Long submit){
+//        private Answer createAnswer(Member member,Option option,QuestionType type,Grid grid,Survey survey,Question question,Essay essay, Slider slider, Satisfaction satisfaction, Long submit){
 //            Answer answer=new Answer();
 //            answer.setMember(member);
 //            answer.setOption(option);
@@ -300,18 +299,19 @@
 //            answer.setSurvey(survey);
 //            answer.setQuestion(question);
 //            answer.setEssay(essay);
-//            answer.setLinear_answer(linear);
+//            answer.setSlider(slider);
 //            answer.setSatisfaction(satisfaction);
 //            answer.setSubmit(submit);
 //
 //            return answer;
 //        }
 //
-//        private Essay createEssay(Member member,Survey survey, Question question,String contents){
+//        private Essay createEssay(Member member,Survey survey, Question question,Long submit,String contents){
 //            Essay essay=new Essay();
 //            essay.setMember(member);
 //            essay.setSurvey(survey);
 //            essay.setQuestion(question);
+//            essay.setSubmit(submit);
 //            essay.setContents(contents);
 //
 //            return essay;

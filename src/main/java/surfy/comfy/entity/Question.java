@@ -48,8 +48,9 @@ public class Question {
     @OneToMany(mappedBy = "question",cascade = CascadeType.ALL)
     private List<Satisfaction> satisfactions;
 
-    @OneToOne(mappedBy = "question")
-    private Linear linear;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "question",cascade = CascadeType.ALL)
+    private List<Slider> sliders;
 
     private String contents;
 

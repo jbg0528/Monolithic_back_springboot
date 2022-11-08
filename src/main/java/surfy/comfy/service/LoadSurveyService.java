@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import surfy.comfy.data.result.GetSubmitListResponse;
 import surfy.comfy.data.survey.GetSurveyDataResponse;
+import surfy.comfy.data.survey.GetSurveyFinishTime;
 import surfy.comfy.entity.*;
 import surfy.comfy.repository.*;
+import surfy.comfy.type.SurveyType;
 
 @Service
 @RequiredArgsConstructor
@@ -19,19 +21,17 @@ public class LoadSurveyService {
 
     @SneakyThrows
     @Transactional
-    public String getSurveydata(Long surveyId,Boolean loadAnswer,Long submitid){
-        ObjectMapper mapper=new ObjectMapper();
+    public GetSurveyDataResponse getSurveydata(Long surveyId,Boolean loadAnswer,Long submitid){
         Survey survey= surveyRepository.findSurveysById(surveyId);
-        String str_json=mapper.writeValueAsString(new GetSurveyDataResponse(survey,loadAnswer,submitid));
-        return str_json;
+        GetSurveyDataResponse ret = new GetSurveyDataResponse(survey,loadAnswer,submitid);
+        return ret;
     }
 
     @SneakyThrows
     @Transactional
-    public String getsubmitlist(Long surveyId){
-        ObjectMapper mapper=new ObjectMapper();
+    public GetSubmitListResponse getsubmitlist(Long surveyId){
         Survey survey= surveyRepository.findSurveysById(surveyId);
-        String str_json=mapper.writeValueAsString(new GetSubmitListResponse(survey));
-        return str_json;
+        GetSubmitListResponse ret = new GetSubmitListResponse(survey);
+        return ret;
     }
 }

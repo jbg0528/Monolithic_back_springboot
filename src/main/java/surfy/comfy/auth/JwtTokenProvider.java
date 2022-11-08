@@ -13,6 +13,8 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class JwtTokenProvider {
     // 1 * 30 * 1000L;   // 30초
     // 60 * 60 * 24 * 7 * 1000L; //1주
     private final long ACCESS_TOKEN_VALID_TIME = 1 * 10 * 1000L;
-    private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 7 * 1000L;
+    private final long REFRESH_TOKEN_VALID_TIME = 10 * 60 * 1000L;;
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
@@ -124,16 +126,18 @@ public class JwtTokenProvider {
             return false;
         }
     }
-    public boolean isValidRefreshToken(String token) {
-        System.out.println("isValidRefreshToken is : " +token);
-        try {
-            Claims refreshClaims = getClaimsToken(token);
+    public boolean isValidRefreshToken(String tokenId) {
+        System.out.println("isValidRefreshTokenId is : " +tokenId);
+        String refreshToken=tokenRepository.findByRefreshTokenIdxEncrypted(tokenId).get().getRefreshToken();
+        try{
+            Claims refreshClaims = getClaimsToken(refreshToken);
             logger.info("Refresh expireTime: {}",refreshClaims.getExpiration());
             logger.info("Refresh email: {}",refreshClaims.get("email"));
+
             return true;
-        } catch (ExpiredJwtException exception) { // 리프레시 토큰 만료
-            Token refreshToken= tokenRepository.findByRefreshToken(token).get();
-            tokenRepository.delete(refreshToken);
+        }  catch (ExpiredJwtException exception) { // 리프레시 토큰 만료
+            Token token= tokenRepository.findByRefreshToken(refreshToken).get();
+            tokenRepository.delete(token);
             System.out.println("Token Expired email : " + exception.getClaims().get("email"));
             return false;
         } catch (JwtException exception) {
@@ -143,6 +147,25 @@ public class JwtTokenProvider {
             System.out.println("Token is null");
             return false;
         }
+//        try {
+//
+//            Claims refreshClaims = getClaimsToken(token);
+//            logger.info("Refresh expireTime: {}",refreshClaims.getExpiration());
+//            logger.info("Refresh email: {}",refreshClaims.get("email"));
+//
+//            return true;
+//        } catch (ExpiredJwtException exception) { // 리프레시 토큰 만료
+//            Token refreshToken= tokenRepository.findByRefreshToken(token).get();
+//            tokenRepository.delete(refreshToken);
+//            System.out.println("Token Expired email : " + exception.getClaims().get("email"));
+//            return false;
+//        } catch (JwtException exception) {
+//            System.out.println("Refresh Token Tampered");
+//            return false;
+//        } catch (NullPointerException exception) {
+//            System.out.println("Token is null");
+//            return false;
+//        }
     }
     public boolean isOnlyExpiredToken(String token) {
         System.out.println("isValidToken is : " +token);
@@ -161,5 +184,21 @@ public class JwtTokenProvider {
             System.out.println("Token is null");
             return false;
         }
+    }
+
+    // refresh token index 암호화
+    public String tokenIndexEncrypt(String index) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(index.getBytes());
+
+        return bytesToHex(md.digest());
+    }
+
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder();
+        for (byte b : bytes) {
+            builder.append(String.format("%02x", b));
+        }
+        return builder.toString();
     }
 }

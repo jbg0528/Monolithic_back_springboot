@@ -9,6 +9,7 @@ public class GetChoiceAnswerResponse {
     private Long temid;
     private Long rootid;
     private Long selectid;
+    public GetChoiceAnswerResponse(){}
     public GetChoiceAnswerResponse(Answer answer){
         this.id=answer.getId();
 

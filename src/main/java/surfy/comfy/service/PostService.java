@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import surfy.comfy.data.manage.SurveyResponse;
 import surfy.comfy.data.post.*;
 import surfy.comfy.entity.*;
-import surfy.comfy.exception.post.CannotDeletePost;
+import surfy.comfy.exception.post.CannotDeleteSurvey;
 import surfy.comfy.exception.post.DeleteInvalidUser;
 import surfy.comfy.repository.*;
 import surfy.comfy.type.SurveyType;

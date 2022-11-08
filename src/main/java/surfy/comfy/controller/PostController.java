@@ -96,7 +96,7 @@ public class PostController {
      * @param memberId
      * @return
      */
-    @DeleteMapping("/post-status/{postId}/{memberId}")
+    @DeleteMapping("/post/{postId}/{memberId}")
     public BaseResponse<DeletePostResponse> deletePost(@PathVariable(name="postId")Long postId,@PathVariable(name="memberId")String memberId){
         logger.info("[deletePost]: {}",postId);
         DeletePostResponse response= postService.deletePost(postId,memberId);

@@ -56,16 +56,19 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
         else if(!jwtTokenProvider.isValidAccessToken(accessToken)&&jwtTokenProvider.isValidRefreshToken(refreshToken)){
             logger.info(">JwtTokenInterceptor - invalid AccessToken && valid RefreshToken");
             TokenResponse tokenResponse=oAuthService.issueAccessToken(request);
-            response.addHeader("ACCESS_TOKEN",tokenResponse.getACCESS_TOKEN());
-            response.addHeader("REFRESH_TOKEN",tokenResponse.getREFRESH_TOKEN());
-            response.addHeader("msg", "Reissue access token.");
+            logger.info("[interceptor]");
+            logger.info("accessToken: {}",tokenResponse.getACCESS_TOKEN());
+            logger.info("refreshToken: {}",tokenResponse.getREFRESH_TOKEN());
+//            response.addHeader("ACCESS_TOKEN",tokenResponse.getACCESS_TOKEN());
+//            response.addHeader("REFRESH_TOKEN",String.valueOf(tokenResponse.getREFRESH_TOKEN()));
+//            response.addHeader("msg", "Reissue access token.");
             return true;
         }
         // refresh token도 유효하지 않은 경우
         else{
-            Token token=tokenRepository.findByRefreshToken(refreshToken).get();
-            logger.info("try to delete token");
-            tokenRepository.delete(token);
+//            Token token=tokenRepository.findByRefreshTokenIdxEncrypted(refreshToken).get();
+//            logger.info("try to delete token");
+//            tokenRepository.delete(token);
             throw new InvalidRefreshToken();
         }
 

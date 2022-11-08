@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import surfy.comfy.config.BaseResponse;
-import surfy.comfy.data.post.PostBookmarkRequest;
+import surfy.comfy.data.bookmark.PostBookmarkRequest;
 import surfy.comfy.service.BookmarkService;
 
 @RestController
@@ -17,22 +17,6 @@ public class BookmarkController {
 
     /**
      * 즐겨찾기 추가
-     * @param postId
-     * @param memberId
-     * @return
-     */
-//    @PostMapping("/bookmark/{postId}/{memberId}")
-//    public BaseResponse<String> addBookmark(@PathVariable(name="postId")Long postId, @PathVariable(name="memberId")Long memberId){
-//        logger.info("[addBookmark]- postId: {} memberId: {}",postId,memberId);
-//        String response=bookmarkService.addBookmark(postId,memberId);
-//
-//        return new BaseResponse<>(response);
-//    }
-
-    /**
-     * 즐겨찾기 추가 v2
-     * @param request
-     * @return
      */
     @PostMapping("/bookmark")
     public BaseResponse<String> addBookmark(@RequestBody PostBookmarkRequest request){
@@ -41,13 +25,6 @@ public class BookmarkController {
 
         return new BaseResponse<>(response);
     }
-
-    /**
-     * 즐겨찾기 삭제
-     * @param postId
-     * @param memberId
-     * @return
-     */
     @DeleteMapping("/bookmark/{postId}/{memberId}")
     public BaseResponse<String> deleteBookmark(@PathVariable(name="postId") Long postId, @PathVariable(name="memberId") Long memberId){
         logger.info("[deleteBookmark]");

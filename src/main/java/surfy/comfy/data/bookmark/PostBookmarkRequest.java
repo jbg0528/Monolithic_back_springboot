@@ -1,9 +1,9 @@
-package surfy.comfy.data.post;
+package surfy.comfy.data.bookmark;
 
 import lombok.Data;
 
 @Data
 public class PostBookmarkRequest {
-    private Long memberId;
     private Long postId;
+    private Long memberId;
 }

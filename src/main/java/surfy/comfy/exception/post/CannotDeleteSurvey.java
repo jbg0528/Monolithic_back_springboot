@@ -3,6 +3,6 @@ package surfy.comfy.exception.post;
 import surfy.comfy.config.BaseResponseStatus;
 import surfy.comfy.exception.BusinessException;
 
-public class CannotDeletePost extends BusinessException {
-    public CannotDeletePost(){super(BaseResponseStatus.SURVEY_EXIST);}
+public class CannotDeleteSurvey extends BusinessException {
+    public CannotDeleteSurvey(){super(BaseResponseStatus.POST_EXIST);}
 }

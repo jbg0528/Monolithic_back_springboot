@@ -21,13 +21,8 @@ public class WebConfig implements WebMvcConfigurer {
         // TODO: jwt interceptor addPathPatterns 수정 필요
         registry.addInterceptor(jwtTokenInterceptor)
                 .addPathPatterns("/myPage/**")
-//                .addPathPatterns("/bookmark/**")
-//                .addPathPatterns("/deleteSurvey/**")
-//                .addPathPatterns("/surveyPage/**")
-//                .addPathPatterns("/survey-status/**")
-//                .addPathPatterns("/created-survey/**")
-                .addPathPatterns("/selectSurvey/**")
-                .addPathPatterns("/post-status/**")
+                .addPathPatterns("/surveys/**")
+                .addPathPatterns("/result/**")
                 ;
 
 
@@ -41,21 +36,16 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addMapping("/**")
                 .allowedOrigins("http://www.commfy.shop:3000")
-//                .allowedOrigins("http://www.commfy.shop:3000")
                 .exposedHeaders("ACCESS_TOKEN")
-                .exposedHeaders("REFRESH_TOKEN") // 서버에서 반환할 헤더
-//                .allowCredentials(true)
-                .allowedHeaders("Content-Type", "ACCESS_TOKEN")
-                .allowedHeaders("Content-Type","REFRESH_TOKEN")
-                .allowedMethods("POST", "OPTIONS")
-                .allowedMethods("DELETE","OPTIONS")
-                .allowedMethods("GET","OPTIONS");
-//                .allowedMethods(
-//                        HttpMethod.GET.name(),
-//                        HttpMethod.HEAD.name(),
-//                        HttpMethod.POST.name(),
-//                        HttpMethod.PUT.name(),
-//                        HttpMethod.DELETE.name());
+                .exposedHeaders("REFRESH_TOKEN")
+                .exposedHeaders("msg") // 서버에서 반환할 헤더
+                .allowCredentials(true)
+                .allowedMethods(
+                        HttpMethod.GET.name(),
+                        HttpMethod.HEAD.name(),
+                        HttpMethod.POST.name(),
+                        HttpMethod.PUT.name(),
+                        HttpMethod.DELETE.name());
 
 //        registry.addMapping("/**")
 //                .allowedOrigins("*")

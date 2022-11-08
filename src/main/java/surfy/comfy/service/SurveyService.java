@@ -6,25 +6,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import surfy.comfy.data.ThumbnailRequest;
 import surfy.comfy.data.manage.DeleteSurveyResponse;
 import surfy.comfy.data.manage.FinishSurveyResponse;
 import surfy.comfy.data.manage.SurveyResponse;
-import surfy.comfy.data.post.MySurveyResponse;
-import surfy.comfy.data.survey.GetSurveyResponse;
 import surfy.comfy.data.survey.PostSurveyResponse;
-import surfy.comfy.entity.Grid;
-import surfy.comfy.entity.Option;
-import surfy.comfy.entity.Question;
-import surfy.comfy.entity.Survey;
+import surfy.comfy.entity.*;
+import surfy.comfy.exception.post.CannotDeleteSurvey;
+import surfy.comfy.exception.post.DeleteInvalidUser;
 import surfy.comfy.repository.*;
 import surfy.comfy.type.SurveyType;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +26,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class SurveyService {
 
+    private final PostRepository postRepository;
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
     private final GridRepository gridRepository;
@@ -121,9 +116,16 @@ public class SurveyService {
     @Transactional
     public DeleteSurveyResponse deleteSurvey(Long surveyId, String memberId){
         Survey survey = surveyRepository.findById(surveyId).get();
+        Optional<Post> post = postRepository.findAllBySurvey_Id(survey.getId());
+
+        if(post.isPresent()) {
+            logger.info("삭제 불가능");
+            throw new CannotDeleteSurvey();
+        }
 
         surveyRepository.delete(survey);
         return new DeleteSurveyResponse(surveyId, Long.parseLong(memberId));
+
     }
 
 
@@ -155,7 +157,6 @@ public class SurveyService {
         Survey survey = surveyRepository.findById(surveyId).get();
 
         survey.setStatus(SurveyType.finish);
-
         return new FinishSurveyResponse(surveyId);
     }
 

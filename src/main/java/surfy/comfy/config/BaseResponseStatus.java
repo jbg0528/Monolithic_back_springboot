@@ -34,6 +34,8 @@ public enum BaseResponseStatus {
     //게시글 삭제 - 설문지 삭제 시도 유저가 잘못됨.
     DELETE_INVALID_USER(false,2021,"잘못된 유저가 게시글 삭제를 시도했습니다."),
 
+    //설문지 삭제 - 게시글이 존재해서 설문지 삭제 불가
+    POST_EXIST(false, 2022, "게시글이 존재하여 설문지 삭제가 불가합니다. 게시글을 먼저 삭제해주세요"),
 
 
 
@@ -46,6 +48,7 @@ public enum BaseResponseStatus {
     // [POST] /users
     DUPLICATED_EMAIL(false, 3013, "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,3014,"없는 아이디거나 비밀번호가 틀렸습니다."),
+
 
 
 

@@ -10,7 +10,8 @@ import surfy.comfy.entity.Question;
 public class GetQuestionResponse {
     private Long id;
     private String ques;
-    private JSONObject type;
+    private GetQuestionTypeResponse type;
+    public GetQuestionResponse(){}
     @SneakyThrows
     public GetQuestionResponse(Question question,Boolean loadAnswer,Long submitid){
         ObjectMapper mapper=new ObjectMapper();
@@ -18,7 +19,7 @@ public class GetQuestionResponse {
 
         this.id=question.getId();
         this.ques=question.getContents();
-        String str_answer=mapper.writeValueAsString(new GetQuestionTypeResponse(question,loadAnswer,submitid));
-        this.type=(JSONObject) parser.parse(str_answer);
+        this.type=new GetQuestionTypeResponse(question,loadAnswer,submitid);
+
     }
 }

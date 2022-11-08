@@ -11,6 +11,7 @@ import surfy.comfy.entity.Token;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,7 +47,7 @@ public class OAuthController {
 
     // 구글 로그인 - 프론트에서 accessToken을 받음.
     @GetMapping(value="/login/google/{accessToken}")
-    public BaseResponse<TokenResponse> googleLogin(@PathVariable(name="accessToken") String accessToken) throws IOException {
+    public BaseResponse<TokenResponse> googleLogin(@PathVariable(name="accessToken") String accessToken) throws IOException, NoSuchAlgorithmException {
 //    public BaseResponse<TokenResponse> login(@PathVariable(name = "socialLoginType") String socialLoginPath, @RequestParam(name="accessToken") String accessToken) throws IOException {
         //logger.info("[login] socialLoginType: {}",socialLoginPath);
         logger.info("[login] accessToken: {}",accessToken);

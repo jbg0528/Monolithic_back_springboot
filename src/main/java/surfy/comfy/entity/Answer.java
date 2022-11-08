@@ -17,7 +17,6 @@ public class Answer {
     @Column(name="answer_id")
     private Long id;
 
-
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name="question_id")
@@ -49,6 +48,7 @@ public class Answer {
     @Column(name="submit_id")
     private Long submit;
 
-    //TODO: 선형 배율 어떻게 저장?
-    private Long linear_answer;
+    @OneToOne
+    @JoinColumn(name="slider_id")
+    private Slider slider;
 }

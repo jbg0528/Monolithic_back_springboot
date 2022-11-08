@@ -16,6 +16,7 @@ public class Token {
 
     //private String accessToken;
     private String refreshToken;
+    private String refreshTokenIdxEncrypted;
 
     @ManyToOne
     @JsonBackReference

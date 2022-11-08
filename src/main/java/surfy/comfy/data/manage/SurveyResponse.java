@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import surfy.comfy.entity.Survey;
 import surfy.comfy.type.SurveyType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,7 +15,7 @@ public class SurveyResponse {
 
     private String title;
     private String content;
-    private LocalDateTime start;
+    private LocalDate start;
     private Long surveyId;
     private SurveyType status; // 설문 상태
     private Long thumbnail;
